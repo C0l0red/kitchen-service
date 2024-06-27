@@ -34,12 +34,15 @@ export default class MenuItemsService {
         return buildMenuItemDto(menuItem);
     }
 
-    async listMenuItemsForVendor(vendorId: number, pagedRequest: PagedRequestDto): Promise<DtoListAndCount<MenuItem>> {
+    async listMenuItemsForVendor(pagedRequest: PagedRequestDto, vendorId?: number): Promise<DtoListAndCount<MenuItem>> {
+        const where = vendorId ? {vendor: {id: vendorId}} : {};
+
         const [menuItems, count] = await this.menuItemsRepository.findAndCount({
-            where: {vendor: {id: vendorId}},
+            where,
             take: pagedRequest.pageSize,
             skip: (pagedRequest.page - 1) * pagedRequest.pageSize,
             order: {price: -1},
+            relations: {vendor: true}
         });
 
         return {

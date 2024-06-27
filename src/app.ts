@@ -24,7 +24,7 @@ import PermissionsMiddleware from "./middleware/permissions.middleware";
 
 const indexRouter = Router();
 indexRouter.get("/", (request: Request, response: Response) => {
-    response.redirect("https://documenter.getpostman.com/view/11142088/2sA3JNbLdb");
+    response.redirect("https://documenter.getpostman.com/view/11142088/2sA3dsnuKk");
 });
 
 export default class ExpressApp {

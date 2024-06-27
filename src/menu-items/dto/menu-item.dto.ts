@@ -5,6 +5,7 @@ export default class MenuItemDto implements Dto<MenuItem> {
     name: string;
     description: string;
     price: number;
+    vendorId: number
 }
 
 export function buildMenuItemDto(menuItem: MenuItem): MenuItemDto {
@@ -12,7 +13,8 @@ export function buildMenuItemDto(menuItem: MenuItem): MenuItemDto {
         id: menuItem.id,
         name: menuItem.name,
         description: menuItem.description,
-        price: menuItem.price
+        price: menuItem.price,
+        vendorId: menuItem.vendor.id,
     }
 }
 

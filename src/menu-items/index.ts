@@ -17,6 +17,7 @@ const createMenuItemsModule = (
     router.post('', permissionsMiddleware.isVendor, menuItemsController.createMenuItem.bind(menuItemsController));
     router.get('/:vendorId/:menuItemId', menuItemsController.getMenuItem.bind(menuItemsController));
     router.get('/:vendorId', menuItemsController.listMenuItemsForVendor.bind(menuItemsController));
+    router.get('', menuItemsController.listAllMenuItems.bind(menuItemsController));
     router.patch(
         '/:vendorId/:menuItemId',
         permissionsMiddleware.isVendor,

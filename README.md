@@ -5,8 +5,8 @@ Typescript, TypeORM and PostgreSQL.
 
 ## Getting Started
 
-This application is hosted on [Render](https://logistics-service.onrender.com)\
-And a documentation is available on [Postman](https://documenter.getpostman.com/view/11142088/2sA3JNbLdb)
+This application is hosted on [Render](https://kitchen-service-fb84.onrender.com)\
+And a documentation is available on [Postman](https://documenter.getpostman.com/view/11142088/2sA3dsnuKk)
 
 You can run this application any of three ways, depending on your available
 resources and setup.
