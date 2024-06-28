@@ -17,23 +17,29 @@ describe("Users Service", () => {
     describe("getProfile", () => {
         it("should call findOneBy() once", async () => {
             await usersService.getProfile(1);
-            expect(mockUsersRepository.findOneBy).toHaveBeenCalledTimes(1);
-            expect(mockUsersRepository.findOneBy).toHaveBeenCalledWith({id: 1});
+            expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(1);
+            expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
+                where: {id: 1},
+                relations: {vendor: true, customer: true}
+            });
         });
     });
 
     describe("findByUserId", () => {
         it("should call findOneBy() once", async () => {
             await usersService.findUserById(1);
-            expect(mockUsersRepository.findOneBy).toHaveBeenCalledTimes(1);
-            expect(mockUsersRepository.findOneBy).toHaveBeenCalledWith({id: 1});
+            expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(1);
+            expect(mockUsersRepository.findOne).toHaveBeenCalledWith({
+                where: {id: 1},
+                relations: {vendor: true, customer: true}
+            });
         });
 
         it("should throw if no user is found", async () => {
-            jest.spyOn(mockUsersRepository, 'findOneBy').mockResolvedValue(null);
+            jest.spyOn(mockUsersRepository, 'findOne').mockResolvedValue(null);
 
             await expect(usersService.findUserById(1)).rejects.toThrow();
-            expect(mockUsersRepository.findOneBy).toHaveBeenCalledTimes(1);
+            expect(mockUsersRepository.findOne).toHaveBeenCalledTimes(1);
         });
     });
 

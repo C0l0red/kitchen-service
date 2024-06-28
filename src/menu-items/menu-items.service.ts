@@ -16,7 +16,6 @@ export default class MenuItemsService {
 
     async createMenuItem(userId: number, createMenuItemDto: CreateMenuItemDto) {
         const vendor = await this.vendorsService.getVendorDetails({user: {id: userId}});
-        Logger.log(`Vendor Id is ${vendor.id}`);
         await this.menuItemsRepository.findOneBy({
             vendor: {id: vendor.id},
             name: createMenuItemDto.name

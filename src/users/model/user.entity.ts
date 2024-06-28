@@ -1,5 +1,7 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import {UserType} from "./user-type.enum";
+import Vendor from "../../vendors/models/vendor.entity";
+import Customer from "../../customers/models/customer.entity";
 
 @Entity({name: 'users'})
 export default class User {
@@ -17,4 +19,10 @@ export default class User {
 
     @Column({enum: UserType})
     userType: UserType;
+
+    @OneToOne(() => Vendor, (vendor) => vendor.user)
+    vendor?: Vendor;
+
+    @OneToOne(() => Customer, (customer) => customer.user)
+    customer?: Customer;
 }

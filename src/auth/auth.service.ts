@@ -25,7 +25,6 @@ export default class AuthService {
         }
 
         const payload = buildJwtPayload(user);
-        Logger.log(`payload is ${JSON.stringify(payload)}`);
         const token = EncryptionService.generateToken(payload);
 
         Logger.log(`User '${user.email}' logged in successfully`);

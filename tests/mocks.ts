@@ -79,7 +79,13 @@ export const mockUser: User = {
     email: 'email@test.com',
     password: 'password',
     phoneNumber: '',
-    userType: UserType.CUSTOMER
+    userType: UserType.CUSTOMER,
+    customer: {
+        id: 1,
+        firstName: 'Test',
+        lastName: 'User',
+        user: new User()
+    }
 }
 
 export const mockVendor: Vendor = {
@@ -117,7 +123,7 @@ export const mockDataSource: jest.Mocked<DataSource> = {
 } as unknown as jest.Mocked<DataSource>;
 
 export const mockUsersRepository: MockUsersRepository = {
-    findOne: jest.fn(),
+    findOne: jest.fn().mockResolvedValue(mockUser),
     save: jest.fn(),
     findOneBy: jest.fn().mockResolvedValue({id: 1, username: 'Test'})
 } as unknown as MockUsersRepository;

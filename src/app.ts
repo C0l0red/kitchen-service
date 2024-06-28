@@ -22,7 +22,12 @@ import MenuItem from "./menu-items/models/menu-item.entity";
 import PermissionsMiddleware from "./middleware/permissions.middleware";
 
 const indexRouter = Router();
+
 indexRouter.get("/", (request: Request, response: Response) => {
+    response.send("API is live! Hit /docs to visit the Postman documentation");
+})
+
+indexRouter.get("/docs", (request: Request, response: Response) => {
     response.redirect("https://documenter.getpostman.com/view/11142088/2sA3dsnuKk");
 });
 

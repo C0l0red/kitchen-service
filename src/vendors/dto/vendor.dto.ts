@@ -4,7 +4,7 @@ export default class VendorDto implements Dto<Vendor> {
     id: number;
     businessName: string;
     businessDescription: string;
-    businessNumber: string;
+    businessNumber?: string;
 }
 
 export function buildVendorDto(vendor: Vendor): VendorDto {
@@ -12,7 +12,7 @@ export function buildVendorDto(vendor: Vendor): VendorDto {
         id: vendor.id,
         businessName: vendor.businessName,
         businessDescription: vendor.businessDescription,
-        businessNumber: vendor.user.phoneNumber,
+        businessNumber: vendor.user?.phoneNumber,
     };
 }
 

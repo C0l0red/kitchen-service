@@ -7,11 +7,11 @@ import MenuItem from "./menu-items/models/menu-item.entity";
 export {};
 
 declare global {
-    type Dto<T> = Partial<T>;
+    interface Extensible { [key: string]: any;}
+    interface Dto<T> extends  Partial<T> , Extensible {}
     type UsersRepository = Repository<User>;
     type VendorsRepository = Repository<Vendor>;
     type CustomersRepository = Repository<Customer>;
     type MenuItemsRepository = Repository<MenuItem>;
     type DtoListAndCount<T> = { entities: Dto<T>[], count: number };
-    type EntitiesAndCount<T> = {entities: T[], count: number};
 }

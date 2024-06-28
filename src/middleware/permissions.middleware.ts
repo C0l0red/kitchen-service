@@ -13,7 +13,6 @@ export default class PermissionsMiddleware {
     async isVendor(request: Request, response: Response, next: NextFunction) {
         const userType = (request as AuthenticatedRequest).userType;
 
-        Logger.log(`User type is ${userType}`);
         if (userType != UserType.VENDOR) {
             next(new HttpError('You are not authorized to use this endpoint', 403));
             return;

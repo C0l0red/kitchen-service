@@ -1,20 +1,21 @@
-import {buildUserDto} from "./dto/user.dto";
-import User from "./model/user.entity";
-import Logger from "../common/logger";
+import UserDto, {buildUserDto} from "./dto/user.dto";
 import HttpError from "../common/errors/http.error";
 
 export default class UsersService {
     constructor(private readonly usersRepository: UsersRepository) {
     }
 
-    async getProfile(userId: number) {
+    async getProfile(userId: number): Promise<UserDto> {
         const user = await this.findUserById(userId);
 
         return buildUserDto(user);
     }
 
     async findUserById(userId: number) {
-        return this.usersRepository.findOneBy({id: userId}).then(user => {
+        return this.usersRepository.findOne({
+            where: {id: userId},
+            relations: {vendor: true, customer: true}
+        }).then(user => {
             if (!user) {
                 throw new HttpError(`User with ID ${userId} not found`, 404);
             }

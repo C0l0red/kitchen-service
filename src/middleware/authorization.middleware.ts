@@ -3,14 +3,14 @@ import HttpError from "../common/errors/http.error";
 import EncryptionService from "../common/encryption.service";
 import AuthenticatedRequest from "../common/interfaces/authenticated-request";
 
-const publicEndpoints = ['/', '/json', '/auth/register-vendor', '/auth/register-customer', '/auth/login'];
+const privateResources = ['/menu-items', '/vendors'];
 
 export const authorizationMiddleware = (
     request: Request,
     response: Response,
     next: NextFunction
 ) => {
-    if (publicEndpoints.includes(request.url)) {
+    if (!privateResources.some(resource => request.url.startsWith(resource))) {
         next();
         return;
     }
