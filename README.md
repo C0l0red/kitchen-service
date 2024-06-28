@@ -103,7 +103,8 @@ problems, and require the developer to fix them.
 
 There is a `Logger` class available that handles logging, it can log info
 or errors, both of which are prefixed with a timestamp and some coloring to tell
-them apart easily.
+them apart easily. The logger class helps centralize logging, and makes it
+extremely easy to turn on or off all logging, using an environment variable.
 
 ### Middleware
 
@@ -126,7 +127,7 @@ Five middleware functions exist in this application
 
 A middleware class for permissions, namely `PermissionsMiddlware` exists,
 it provides two methods, one being `isVendor()`, which checks if the current
-logged in user is a vendor, the other being `ownsVendorAccount`, which checks
+logged in user is a vendor, the other being `ownsVendorAccount()`, which checks
 if the current logged in user owns the Vendor account that is required to make
 a certain request.
 
