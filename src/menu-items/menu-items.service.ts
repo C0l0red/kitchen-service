@@ -78,7 +78,7 @@ export default class MenuItemsService {
 
         Logger.log(`Menu Item ${itemId} successfully updated`);
 
-        const menuItem = await this.menuItemsRepository.findOneBy({id: vendorId});
+        const menuItem = await this.menuItemsRepository.findOne({where: {id: vendorId}, relations: {vendor: true}});
         return buildMenuItemDto(menuItem!);
     }
 

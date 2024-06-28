@@ -8,76 +8,9 @@ Typescript, TypeORM and PostgreSQL.
 This application is hosted on [Render](https://kitchen-service-fb84.onrender.com)\
 And a documentation is available on [Postman](https://documenter.getpostman.com/view/11142088/2sA3dsnuKk)
 
-You can run this application any of three ways, depending on your available
-resources and setup.
+## Running the application locally
 
-1. Run with Docker alone
-2. Run with Node.js, npm and a PostgreSQL instance on Docker
-3. Run with Node.js, npm and a PostgreSQL instance on your local machine
-
-Each of the following will be explained.
-
-## Running with Docker
-
-This is the easiest and most straightfoward way as all you need is
-Docker. There is a `docker-compose.yaml` and a `Dockerfile` already
-setup to build and run.
-
-### Requirements
-
-- Docker running on your local machine
-
-### Steps
-
-Build the Docker image\
-`docker-compose build`
-
-Run the Docker container\
-`docker-compose up`
-
-Visit [localhost:3000](http://localhost:3000)
-
-## Running with Node.js and Docker
-
-This will be more suited if you already have Node.js and npm
-but don't have PostgreSQL installed. You can run a PosgreSQL
-instance on Docker instead.
-
-### Requirements
-
-- Node.js
-- npm
-- Docker running on your local machine
-
-### Steps
-
-Create a file named `.env` in the root directory that will
-store environment variables.
-
-Open `.env.example` and copy the keys labeled #2 into the `.env`.
-These will serve as mock environment variables, so you will
-have to provide any missing keys.
-
-Run the PostgreSQL Docker image provided in the project by entering\
-`docker-compose up postgres -d`\
-This starts up a PostgreSQL instance on Docker and persists the
-data in an allocated Docker volume.
-
-Install the Node modules the project is dependent on by entering\
-`npm install`
-
-Compile the Typescript files into Javascript by entering\
-`npm run build`
-
-Start the server on your local machine by entering\
-`npm start`
-
-Visit [localhost:3000](http://localhost:3000)
-
-## Running with Node.js and PostgreSQL
-
-This procedure runs all dependent resources on your local
-machine without the need for a virtual machine.
+This is a procedure on how to run the application locally
 
 ### Requirements
 
@@ -92,7 +25,7 @@ Create a PostgreSQL database you intend to use for this application.
 Create a file named `.env` in the root directory that will
 store environment variables.
 
-Open `.env.example` and copy the keys labeled #1 into the `.env`.
+Open `.env.example` and copy the keys into the `.env` file.
 These will serve as dummy environment variables, so you will
 have to provide any missing keys, including the credentials to
 access your already created PostgreSQL database.
@@ -213,14 +146,24 @@ it is not, a `RequestValidationError` is thrown.
 This module provides controllers, services and DTOs to handle registering and
 logging in both vendors and customers.
 
+### Vendors Module
+
+This module provides controller and service methods to interact with
+the Vendors resource.
+
+### Customers Module
+
+This module provides service methods to interact with
+the Customers resource.
+
 ### Menu Items Module
 
-This module provides controller, services, DTOs and models for creating, updating
+This module provides controllers, services, DTOs and models for creating, updating
 and fetching menu items.
 
 ### Users Module
 
-This module provides controllers and services to fetch the
+This module provides controller and service methods to fetch the
 current authenticated user.
 
 ### Common
@@ -250,6 +193,7 @@ different, as it forces tests to run serially, unlike the unit tests that make m
 sense running concurrently.
 
 ## Questions you might have for me
+
 Just a few things that might be odd or need questioning
 
 - Why I used a different table for vendors and customers

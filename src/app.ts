@@ -14,7 +14,6 @@ import {DataSource} from "typeorm";
 import createUsersModule from "./users";
 import User from "./users/model/user.entity";
 import createCustomersModule from "./customers";
-import Customer from "./customers/models/customer.entity";
 import createAuthModule from "./auth";
 import createVendorsModule from "./vendors";
 import Vendor from "./vendors/models/vendor.entity";

@@ -69,7 +69,7 @@ describe('MenuItemsService', () => {
         it('should call update() once', async () => {
             await service.updateMenuItem(1, 1, mockCreateMenuItemAlfredoDto);
 
-            expect(mockMenuItemsRepository.findOne).toHaveBeenCalledTimes(1);
+            expect(mockMenuItemsRepository.findOne).toHaveBeenCalledTimes(2);
             expect(mockMenuItemsRepository.update).toHaveBeenCalledTimes(1);
         });
 
