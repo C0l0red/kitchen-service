@@ -8,7 +8,7 @@ export default class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({length: 25, unique: true})
+    @Column({length: 60, unique: true})
     email: string;
 
     @Column({length: 60, select: false})
