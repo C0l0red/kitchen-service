@@ -1,4 +1,4 @@
-import UserDto, {buildUserDto} from "./dto/user.dto";
+import UserDto, {userDtoMapper} from "./dto/user.dto";
 import HttpError from "../common/errors/http.error";
 
 export default class UsersService {
@@ -8,7 +8,7 @@ export default class UsersService {
     async getProfile(userId: number): Promise<UserDto> {
         const user = await this.findUserById(userId);
 
-        return buildUserDto(user);
+        return userDtoMapper(user);
     }
 
     async findUserById(userId: number) {

@@ -3,7 +3,7 @@ import ExpressApp from "../src/app";
 
 import {Express} from "express";
 import {dataSource} from "./data";
-import {mockLoginDtoForCustomer, mockLoginDtoForVendor, mockRegisterCustomerDto, mockRegisterVendorDto} from "./mocks";
+import {mockLoginDtoForCustomer, mockLoginDtoForVendor, mockCreateCustomerDto, mockCreateVendorDto} from "./mocks";
 
 describe("Auth Resource", () => {
     let expressApp: ExpressApp;
@@ -24,7 +24,7 @@ describe("Auth Resource", () => {
             const response = await request(app)
                 .post('/auth/register-vendor')
                 .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
+                .send(mockCreateVendorDto);
 
             expect(response.status).toEqual(201);
             expect(response.body).toHaveProperty("message");
@@ -34,14 +34,14 @@ describe("Auth Resource", () => {
             const response = await request(app)
                 .post('/auth/register-vendor')
                 .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
+                .send(mockCreateVendorDto);
 
             expect(response.status).toEqual(201);
 
             const secondResponse = await request(app)
                 .post('/auth/register-vendor')
                 .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
+                .send(mockCreateVendorDto);
 
             expect(secondResponse.status).toEqual(409);
         });
@@ -52,7 +52,7 @@ describe("Auth Resource", () => {
             const response = await request(app)
                 .post('/auth/register-customer')
                 .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
+                .send(mockCreateCustomerDto);
 
             expect(response.status).toEqual(201);
             expect(response.body).toHaveProperty("message");
@@ -62,14 +62,14 @@ describe("Auth Resource", () => {
             const response = await request(app)
                 .post('/auth/register-customer')
                 .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
+                .send(mockCreateCustomerDto);
 
             expect(response.status).toEqual(201);
 
             const secondResponse = await request(app)
                 .post('/auth/register-customer')
                 .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
+                .send(mockCreateCustomerDto);
 
             expect(secondResponse.status).toEqual(409);
         });
@@ -80,7 +80,7 @@ describe("Auth Resource", () => {
             const registrationResponse = await request(app)
                 .post('/auth/register-customer')
                 .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
+                .send(mockCreateCustomerDto);
 
             expect(registrationResponse.status).toEqual(201);
 
@@ -99,7 +99,7 @@ describe("Auth Resource", () => {
             const registrationResponse = await request(app)
                 .post('/auth/register-vendor')
                 .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
+                .send(mockCreateVendorDto);
 
             expect(registrationResponse.status).toEqual(201);
 

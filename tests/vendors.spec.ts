@@ -3,7 +3,7 @@ import ExpressApp from "../src/app";
 
 import {Express} from "express";
 import {dataSource} from "./data";
-import {mockLoginDtoForCustomer, mockRegisterCustomerDto, mockRegisterVendorDto} from "./mocks";
+import {mockLoginDtoForCustomer, mockCreateCustomerDto, mockCreateVendorDto} from "./mocks";
 
 describe('Vendors Resource', () => {
     let expressApp: ExpressApp;
@@ -14,7 +14,7 @@ describe('Vendors Resource', () => {
         await request(app)
             .post('/auth/register-vendor')
             .set('Accept', 'application/json')
-            .send(mockRegisterVendorDto)
+            .send(mockCreateVendorDto)
             .expect(201);
     };
 
@@ -22,7 +22,7 @@ describe('Vendors Resource', () => {
         await request(app)
             .post('/auth/register-customer')
             .set('Accept', 'application/json')
-            .send(mockRegisterCustomerDto)
+            .send(mockCreateCustomerDto)
             .expect(201);
 
         const loginResponse = await request(app)
@@ -62,7 +62,7 @@ describe('Vendors Resource', () => {
             expect(response.body).toHaveProperty('data');
             expect(response.body.totalItems).toEqual(1);
             expect(response.body.totalPages).toEqual(1);
-            expect(response.body.data[0].businessName).toEqual(mockRegisterVendorDto.businessName);
+            expect(response.body.data[0].businessName).toEqual(mockCreateVendorDto.businessName);
         });
     });
 
@@ -75,7 +75,7 @@ describe('Vendors Resource', () => {
 
             expect(response.status).toEqual(200);
             expect(response.body).toHaveProperty('data');
-            expect(response.body.data.businessName).toEqual(mockRegisterVendorDto.businessName);
+            expect(response.body.data.businessName).toEqual(mockCreateVendorDto.businessName);
         });
 
         it('should respond with a 404 upon invalid vendorId', async () => {

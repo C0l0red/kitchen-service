@@ -8,7 +8,7 @@ export default class MenuItemDto implements Dto<MenuItem> {
     vendorId: number
 }
 
-export function buildMenuItemDto(menuItem: MenuItem): MenuItemDto {
+export function menuItemDtoMapper(menuItem: MenuItem): MenuItemDto {
     return {
         id: menuItem.id,
         name: menuItem.name,
@@ -18,6 +18,6 @@ export function buildMenuItemDto(menuItem: MenuItem): MenuItemDto {
     }
 }
 
-export function buildMenuItemListDto(menuItems: MenuItem[]) {
-    return menuItems.map(buildMenuItemDto);
+export function menuItemListDtoMapper(menuItems: MenuItem[]) {
+    return menuItems.map(menuItemDtoMapper);
 }

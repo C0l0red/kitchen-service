@@ -2,7 +2,7 @@ import HttpError from "../common/errors/http.error";
 import CreateMenuItemDto from "./dto/create-menu-item.dto";
 import UpdateMenuItemDto from "./dto/update-menu-item.dto";
 import Logger from "../common/logger";
-import {buildMenuItemDto, buildMenuItemListDto} from "./dto/menu-item.dto";
+import {menuItemDtoMapper, menuItemListDtoMapper} from "./dto/menu-item.dto";
 import MenuItem from "./models/menu-item.entity";
 import PagedRequestDto from "../common/dto/paged-request.dto";
 import VendorsService from "../vendors/vendors.service";
@@ -30,7 +30,7 @@ export default class MenuItemsService {
 
         Logger.log(`Menu Item ${menuItem.name} added`);
 
-        return buildMenuItemDto(menuItem);
+        return menuItemDtoMapper(menuItem);
     }
 
     async listMenuItemsForVendor(pagedRequest: PagedRequestDto, vendorId?: number): Promise<DtoListAndCount<MenuItem>> {
@@ -45,7 +45,7 @@ export default class MenuItemsService {
         });
 
         return {
-            entities: buildMenuItemListDto(menuItems),
+            entities: menuItemListDtoMapper(menuItems),
             count
         }
     }
@@ -78,7 +78,7 @@ export default class MenuItemsService {
         Logger.log(`Menu Item ${itemId} successfully updated`);
 
         const menuItem = await this.menuItemsRepository.findOne({where: {id: itemId}, relations: {vendor: true}});
-        return buildMenuItemDto(menuItem!);
+        return menuItemDtoMapper(menuItem!);
     }
 
     async removeMenuItem(vendorId: number, itemId: number) {

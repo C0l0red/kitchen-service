@@ -1,9 +1,9 @@
 import LoginDto from "./dto/login.dto";
-import {RegisterCustomerDto, RegisterDto, RegisterVendorDto} from "./dto/register.dto";
+import {CreateCustomerDto, RegisterDto, CreateVendorDto} from "./dto/register.dto";
 import UsersService from "../users/users.service";
 import HttpError from "../common/errors/http.error";
-import {buildJwtPayload} from "../common/dto/jwt-payload.dto";
-import {buildTokenDto} from "./dto/token.dto";
+import {jwtPayloadMapper} from "../common/dto/jwt-payload.dto";
+import {tokenDtoMapper} from "./dto/token.dto";
 import EncryptionService from "../common/encryption.service";
 import Logger from "../common/logger";
 import {UserType} from "../users/model/user-type.enum";
@@ -24,12 +24,12 @@ export default class AuthService {
             throw new HttpError("Invalid Credentials", 401);
         }
 
-        const payload = buildJwtPayload(user);
+        const payload = jwtPayloadMapper(user);
         const token = EncryptionService.generateToken(payload);
 
         Logger.log(`User '${user.email}' logged in successfully`);
 
-        return buildTokenDto(token);
+        return tokenDtoMapper(token);
     }
 
     async register(dto: RegisterDto, userType: UserType) {
@@ -40,10 +40,10 @@ export default class AuthService {
 
         switch (userType) {
             case UserType.CUSTOMER:
-                await this.customersService.createCustomer(dto as RegisterCustomerDto);
+                await this.customersService.createCustomer(dto as CreateCustomerDto);
                 break;
             case UserType.VENDOR:
-                await this.vendorsService.createVendor(dto as RegisterVendorDto);
+                await this.vendorsService.createVendor(dto as CreateVendorDto);
                 break;
         }
 

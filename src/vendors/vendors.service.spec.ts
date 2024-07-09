@@ -2,7 +2,7 @@ import VendorsService from "./vendors.service";
 import {
     mockVendorsRepository,
     mockVendor,
-    mockRegisterVendorDto,
+    mockCreateVendorDto,
     mockDataSource
 } from "../../tests/mocks";
 
@@ -20,7 +20,7 @@ describe('VendorsService', () => {
     describe('createVendor', () => {
         it('should run with no errors', async () => {
             // Couldn't figure out a way to mock a transaction
-            await service.createVendor(mockRegisterVendorDto);
+            await service.createVendor(mockCreateVendorDto);
         });
     });
 

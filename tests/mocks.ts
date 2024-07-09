@@ -7,7 +7,7 @@ import VendorsService from "../src/vendors/vendors.service";
 import CustomersService from "../src/customers/customers.service";
 import MenuItem from "../src/menu-items/models/menu-item.entity";
 import CreateMenuItemDto from "../src/menu-items/dto/create-menu-item.dto";
-import {RegisterCustomerDto, RegisterVendorDto} from "../src/auth/dto/register.dto";
+import {CreateCustomerDto, CreateVendorDto} from "../src/auth/dto/register.dto";
 import LoginDto from "../src/auth/dto/login.dto";
 import {DataSource, EntityManager} from "typeorm";
 
@@ -17,7 +17,7 @@ type MockCustomersRepository = jest.Mocked<CustomersRepository>;
 type MockVendorsRepository = jest.Mocked<VendorsRepository>;
 type MockMenuItemsRepository = jest.Mocked<MenuItemsRepository>;
 
-export const mockRegisterVendorDto: RegisterVendorDto = {
+export const mockCreateVendorDto: CreateVendorDto = {
     email: "vendor@test.com",
     password: "password",
     businessName: "Test Business",
@@ -25,7 +25,7 @@ export const mockRegisterVendorDto: RegisterVendorDto = {
     phoneNumber: "08123456789",
 };
 
-export const mockRegisterAltVendorDto: RegisterVendorDto = {
+export const mockRegisterAltVendorDto: CreateVendorDto = {
     email: "alt.vendor@test.com",
     password: "password",
     businessName: "Alt Test Business",
@@ -33,7 +33,7 @@ export const mockRegisterAltVendorDto: RegisterVendorDto = {
     phoneNumber: "08123456789",
 };
 
-export const mockRegisterCustomerDto: RegisterCustomerDto = {
+export const mockCreateCustomerDto: CreateCustomerDto = {
     email: 'customer@test.com',
     password: 'password',
     firstName: 'Test',

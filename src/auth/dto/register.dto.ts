@@ -25,7 +25,7 @@ export class RegisterDto {
     phoneNumber: string;
 }
 
-export class RegisterCustomerDto extends RegisterDto {
+export class CreateCustomerDto extends RegisterDto {
     @IsString()
     @MinLength(2)
     @IsNotEmpty()
@@ -37,7 +37,7 @@ export class RegisterCustomerDto extends RegisterDto {
     lastName: string;
 }
 
-export class RegisterVendorDto extends RegisterDto {
+export class CreateVendorDto extends RegisterDto {
     @IsString()
     @MinLength(3)
     @IsNotEmpty()
@@ -49,36 +49,36 @@ export class RegisterVendorDto extends RegisterDto {
     businessDescription: string;
 }
 
-export async function buildRegisterCustomerDto(object: any) {
-    const registerCustomerDto = new RegisterCustomerDto();
-    registerCustomerDto.email = object.email;
-    registerCustomerDto.password = object.password;
-    registerCustomerDto.firstName = object.firstName;
-    registerCustomerDto.lastName = object.lastName;
-    registerCustomerDto.phoneNumber = object.phoneNumber;
+export async function createCustomerDtoMapper(object: any): Promise<CreateCustomerDto> {
+    const createCustomerDto = new CreateCustomerDto();
+    createCustomerDto.email = object.email;
+    createCustomerDto.password = object.password;
+    createCustomerDto.firstName = object.firstName;
+    createCustomerDto.lastName = object.lastName;
+    createCustomerDto.phoneNumber = object.phoneNumber;
 
-    await validate(registerCustomerDto, {forbidUnknownValues: true}).then(errors => {
+    await validate(createCustomerDto, {forbidUnknownValues: true}).then(errors => {
         if (errors.length > 0) {
             throw new RequestValidationError(errors);
         }
     });
 
-    return registerCustomerDto;
+    return createCustomerDto;
 }
 
-export async function buildRegisterVendorDto(object: any) {
-    const registerVendorDto = new RegisterVendorDto();
-    registerVendorDto.email = object.email;
-    registerVendorDto.password = object.password;
-    registerVendorDto.businessName = object.businessName;
-    registerVendorDto.businessDescription = object.businessDescription;
-    registerVendorDto.phoneNumber = object.phoneNumber;
+export async function createVendorDtoMapper(object: any): Promise<CreateVendorDto> {
+    const createVendorDto = new CreateVendorDto();
+    createVendorDto.email = object.email;
+    createVendorDto.password = object.password;
+    createVendorDto.businessName = object.businessName;
+    createVendorDto.businessDescription = object.businessDescription;
+    createVendorDto.phoneNumber = object.phoneNumber;
 
-    await validate(registerVendorDto, {forbidUnknownValues: true}).then(errors => {
+    await validate(createVendorDto, {forbidUnknownValues: true}).then(errors => {
         if (errors.length > 0) {
             throw new RequestValidationError(errors);
         }
     });
 
-    return registerVendorDto;
+    return createVendorDto;
 }

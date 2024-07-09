@@ -7,11 +7,11 @@ import {
     mockCreateMenuItemAlfredoDto, mockCreateMenuItemGizdodoDto, mockCreateMenuItemPizzaDto, mockLoginDtoForAltVendor,
     mockLoginDtoForCustomer,
     mockLoginDtoForVendor, mockRegisterAltVendorDto,
-    mockRegisterCustomerDto,
-    mockRegisterVendorDto
+    mockCreateCustomerDto,
+    mockCreateVendorDto
 } from "./mocks";
 import UpdateMenuItemDto from "../src/menu-items/dto/update-menu-item.dto";
-import {RegisterVendorDto} from "../src/auth/dto/register.dto";
+import {CreateVendorDto} from "../src/auth/dto/register.dto";
 import LoginDto from "../src/auth/dto/login.dto";
 
 describe('Menu Items Resource', () => {
@@ -26,13 +26,13 @@ describe('Menu Items Resource', () => {
         await expressApp.initializeApp();
         app = expressApp.getApp();
 
-        vendorAuthHeader = await setupVendor(mockRegisterVendorDto, mockLoginDtoForVendor);
+        vendorAuthHeader = await setupVendor(mockCreateVendorDto, mockLoginDtoForVendor);
         altVendorAuthHeader = await setupVendor(mockRegisterAltVendorDto, mockLoginDtoForAltVendor);
         await setupCustomer();
         await setupMenuItems();
     });
 
-    const setupVendor = async (registerDto: RegisterVendorDto, loginDto: LoginDto) => {
+    const setupVendor = async (registerDto: CreateVendorDto, loginDto: LoginDto) => {
         await request(app)
             .post('/auth/register-vendor')
             .set('Accept', 'application/json')
@@ -54,7 +54,7 @@ describe('Menu Items Resource', () => {
         await request(app)
             .post('/auth/register-customer')
             .set('Accept', 'application/json')
-            .send(mockRegisterCustomerDto)
+            .send(mockCreateCustomerDto)
             .expect(201);
 
         const loginResponse = await request(app)

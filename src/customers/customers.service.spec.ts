@@ -1,5 +1,5 @@
 import CustomersService from "./customers.service";
-import {mockDataSource, mockRegisterCustomerDto} from "../../tests/mocks";
+import {mockDataSource, mockCreateCustomerDto} from "../../tests/mocks";
 
 describe('CustomersService', () => {
     let service: CustomersService;
@@ -15,7 +15,7 @@ describe('CustomersService', () => {
     describe('createCustomer', () => {
 
         it('should run with no errors', async () => {
-            await service.createCustomer(mockRegisterCustomerDto);
+            await service.createCustomer(mockCreateCustomerDto);
         });
     });
 

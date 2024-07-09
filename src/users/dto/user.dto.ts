@@ -1,7 +1,7 @@
 import User from "../model/user.entity";
 import {UserType} from "../model/user-type.enum";
-import VendorDto, {buildVendorDto} from "../../vendors/dto/vendor.dto";
-import CustomerDto, {buildCustomerDto} from "../../customers/dto/customer.dto";
+import VendorDto, {vendorDtoMapper} from "../../vendors/dto/vendor.dto";
+import CustomerDto, {customerDtoMapper} from "../../customers/dto/customer.dto";
 
 export default class UserDto implements Dto<User> {
     id: number;
@@ -12,13 +12,13 @@ export default class UserDto implements Dto<User> {
     customer?: CustomerDto;
 }
 
-export function buildUserDto(user: User): UserDto {
+export function userDtoMapper(user: User): UserDto {
     return {
         id: user.id,
         email: user.email,
         phoneNumber: user.phoneNumber,
         userType: user.userType,
-        vendor: user.userType == UserType.VENDOR ? buildVendorDto(user.vendor!) : undefined,
-        customer: user.userType == UserType.CUSTOMER ? buildCustomerDto(user.customer!) : undefined,
+        vendor: user.userType == UserType.VENDOR ? vendorDtoMapper(user.vendor!) : undefined,
+        customer: user.userType == UserType.CUSTOMER ? customerDtoMapper(user.customer!) : undefined,
     }
 }

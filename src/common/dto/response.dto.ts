@@ -3,7 +3,7 @@ export default class ResponseDto<T> {
     data?: T;
 }
 
-export function buildResponse<T>(message: string, data?: T): ResponseDto<T> {
+export function responseDtoMapper<T>(message: string, data?: T): ResponseDto<T> {
     return {
         message,
         data

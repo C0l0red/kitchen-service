@@ -2,7 +2,7 @@ import AuthService from "./auth.service";
 import EncryptionService from "../common/encryption.service";
 import {UserType} from "../users/model/user-type.enum";
 import {mockCustomersService, mockUsersService, mockVendorsService, mockUser} from "../../tests/mocks";
-import {RegisterCustomerDto, RegisterVendorDto} from "./dto/register.dto";
+import {CreateCustomerDto, CreateVendorDto} from "./dto/register.dto";
 
 jest.mock("../common/encryption.service");
 
@@ -63,7 +63,7 @@ describe("Auth Service", () => {
 
     describe("register", () => {
         describe('vendors', () => {
-            const registerVendorDto: RegisterVendorDto = {
+            const createVendorDto: CreateVendorDto = {
                 email: 'email@test.com',
                 password: 'password',
                 businessName: 'Test Business',
@@ -75,7 +75,7 @@ describe("Auth Service", () => {
                 mockGenerateHash.mockResolvedValue("hashedPassword");
                 jest.spyOn(mockUsersService, 'findUserByEmail').mockResolvedValueOnce(null);
 
-                await service.register(registerVendorDto, UserType.VENDOR);
+                await service.register(createVendorDto, UserType.VENDOR);
 
                 expect(mockUsersService.findUserByEmail).toHaveBeenCalledTimes(1);
                 expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith('email@test.com');
@@ -84,17 +84,17 @@ describe("Auth Service", () => {
                 expect(mockGenerateHash).toHaveBeenCalledWith("password");
 
                 expect(mockVendorsService.createVendor).toHaveBeenCalledTimes(1);
-                expect(mockVendorsService.createVendor).toHaveBeenCalledWith(registerVendorDto);
+                expect(mockVendorsService.createVendor).toHaveBeenCalledWith(createVendorDto);
             });
 
             it("should throw if the email is taken", async () => {
-                await expect(service.register(registerVendorDto, UserType.VENDOR))
+                await expect(service.register(createVendorDto, UserType.VENDOR))
                     .rejects.toThrow("A user with this email already exists");
             });
         });
 
         describe('customers', () => {
-            const registerCustomerDto: RegisterCustomerDto = {
+            const createCustomerDto: CreateCustomerDto = {
                 email: 'email@test.com',
                 password: 'password',
                 firstName: 'Test',
@@ -106,7 +106,7 @@ describe("Auth Service", () => {
                 mockGenerateHash.mockResolvedValue("hashedPassword");
                 jest.spyOn(mockUsersService, 'findUserByEmail').mockResolvedValueOnce(null);
 
-                await service.register(registerCustomerDto, UserType.CUSTOMER);
+                await service.register(createCustomerDto, UserType.CUSTOMER);
 
                 expect(mockUsersService.findUserByEmail).toHaveBeenCalledTimes(1);
                 expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith('email@test.com');
@@ -115,11 +115,11 @@ describe("Auth Service", () => {
                 expect(mockGenerateHash).toHaveBeenCalledWith("password");
 
                 expect(mockCustomersService.createCustomer).toHaveBeenCalledTimes(1);
-                expect(mockCustomersService.createCustomer).toHaveBeenCalledWith(registerCustomerDto);
+                expect(mockCustomersService.createCustomer).toHaveBeenCalledWith(createCustomerDto);
             });
 
             it("should throw if the email is taken", async () => {
-                await expect(service.register(registerCustomerDto, UserType.CUSTOMER))
+                await expect(service.register(createCustomerDto, UserType.CUSTOMER))
                     .rejects.toThrow("A user with this email already exists");
             });
         });
