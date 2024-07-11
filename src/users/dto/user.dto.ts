@@ -18,7 +18,7 @@ export function mapTouserDto(user: User): UserDto {
         email: user.email,
         phoneNumber: user.phoneNumber,
         userType: user.userType,
-        vendor: user.userType == UserType.VENDOR ? mapToVendorDto(user.vendor!) : undefined,
-        customer: user.userType == UserType.CUSTOMER ? mapToCustomerDto(user.customer!) : undefined,
+        vendor: user.vendor ? mapToVendorDto(user.vendor!) : undefined,
+        customer: user.customer ? mapToCustomerDto(user.customer!) : undefined,
     }
 }

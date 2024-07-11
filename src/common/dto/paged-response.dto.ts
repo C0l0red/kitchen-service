@@ -2,7 +2,7 @@ import PagedRequestDto from "./paged-request.dto";
 
 export default class PagedResponseDto<T> {
     message: string;
-    data?: T[];
+    data?: Dto<T>[];
     page: number;
     pageSize: number;
     totalPages: number;
@@ -11,15 +11,16 @@ export default class PagedResponseDto<T> {
 
 export function mapToPagedResponseDto<T>(
     message: string,
-    dtosAndCount: DtoListAndCount<T>,
+    entitiesAndCount: EntityListAndCount<T>,
     pagedRequest: PagedRequestDto,
-): PagedResponseDto<Dto<T>> {
+    dtoMapper: (entities: T[]) => Dto<T>[],
+): PagedResponseDto<T> {
     return {
         message,
         page: pagedRequest.page,
         pageSize: pagedRequest.pageSize,
-        totalPages: Math.ceil(dtosAndCount.count / pagedRequest.pageSize),
-        totalItems: dtosAndCount.count,
-        data: dtosAndCount.entities,
+        totalPages: Math.ceil(entitiesAndCount.count / pagedRequest.pageSize),
+        totalItems: entitiesAndCount.count,
+        data: dtoMapper(entitiesAndCount.entities),
     }
 }

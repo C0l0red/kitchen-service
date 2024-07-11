@@ -83,13 +83,13 @@ describe('MenuItemsService', () => {
     describe('listMenuItemsForVendor', () => {
         it('should call findAndCount() once', async () => {
             const spyOnFindAndCount = jest.spyOn(menuItemsRepository, 'findAndCount');
-            await service.listMenuItemsForVendor({page: 1, pageSize: 10}, 1);
+            await service.listMenuItems({page: 1, pageSize: 10}, 1);
 
             expect(spyOnFindAndCount).toHaveBeenCalledTimes(1);
         });
 
         it('should resolve to a DtoListAndCount<MenuItem>', async () => {
-            const dtoListandCount = await service.listMenuItemsForVendor({page: 1, pageSize: 10}, 1);
+            const dtoListandCount = await service.listMenuItems({page: 1, pageSize: 10}, 1);
 
             expect(dtoListandCount.count).toEqual(1);
             expect(dtoListandCount.entities.length).toEqual(1);

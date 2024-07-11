@@ -16,7 +16,7 @@ export default class VendorsService {
     ) {
     }
 
-    async createVendor(createVendorDto: CreateVendorDto): Promise<VendorDto> {
+    async createVendor(createVendorDto: CreateVendorDto): Promise<Vendor> {
         let vendor: Vendor;
         await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
             await transactionalEntityManager.findOneBy(Vendor, {businessName: createVendorDto.businessName}).then(vendor => {
@@ -33,10 +33,10 @@ export default class VendorsService {
             Logger.log(`Vendor ${createVendorDto.businessName} created successfully`);
         });
 
-        return mapToVendorDto(vendor!);
+        return vendor!;
     }
 
-    async listVendors(pagedRequest: PagedRequestDto): Promise<DtoListAndCount<Vendor>> {
+    async listVendors(pagedRequest: PagedRequestDto): Promise<EntityListAndCount<Vendor>> {
         const [vendors, count] = await this.vendorsRepository.findAndCount({
             take: pagedRequest.pageSize,
             skip: (pagedRequest.page - 1) * pagedRequest.pageSize,
@@ -45,16 +45,16 @@ export default class VendorsService {
         });
 
         return {
-            entities: mapToVendorDtoList(vendors),
+            entities: vendors,
             count
         }
     }
 
-    async getVendorDetails(where: Partial<Record<keyof Vendor, any>>): Promise<VendorDto> {
+    async getVendorDetails(where: Partial<Record<keyof Vendor, any>>): Promise<Vendor> {
         return this.vendorsRepository
             .findOne({where, relations: {user: true}}).then(vendor => {
                 if (!vendor) throw new HttpError("Vendor not found", 404);
-                return mapToVendorDto(vendor);
+                return vendor;
             });
     }
 }

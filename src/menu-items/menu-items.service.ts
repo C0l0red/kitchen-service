@@ -14,7 +14,7 @@ export default class MenuItemsService {
     ) {
     }
 
-    async createMenuItem(userId: number, createMenuItemDto: CreateMenuItemDto) {
+    async createMenuItem(userId: number, createMenuItemDto: CreateMenuItemDto): Promise<MenuItem> {
         const vendor = await this.vendorsService.getVendorDetails({user: {id: userId}});
         await this.menuItemsRepository.findOneBy({
             vendor: {id: vendor.id},
@@ -30,10 +30,10 @@ export default class MenuItemsService {
 
         Logger.log(`Menu Item ${menuItem.name} added`);
 
-        return mapToMenuItemDto(menuItem);
+        return menuItem;
     }
 
-    async listMenuItemsForVendor(pagedRequest: PagedRequestDto, vendorId?: number): Promise<DtoListAndCount<MenuItem>> {
+    async listMenuItems(pagedRequest: PagedRequestDto, vendorId?: number): Promise<EntityListAndCount<MenuItem>> {
         const where = vendorId ? {vendor: {id: vendorId}} : {};
 
         const [menuItems, count] = await this.menuItemsRepository.findAndCount({
@@ -45,22 +45,22 @@ export default class MenuItemsService {
         });
 
         return {
-            entities: mapToMenuItemDtoList(menuItems),
+            entities: menuItems,
             count
         }
     }
 
-    async getMenuItemDetails(vendorId: number, itemId: number) {
+    async getMenuItemDetails(vendorId: number, itemId: number): Promise<MenuItem> {
         return this.menuItemsRepository.findOne({
             where: {vendor: {id: vendorId}, id: itemId},
             relations: ['vendor']
         }).then(menuItem => {
             if (!menuItem) throw new HttpError('Menu Item Not Found', 404);
-            return mapToMenuItemDto(menuItem);
+            return menuItem;
         });
     }
 
-    async updateMenuItem(vendorId: number, itemId: number, updateMenuItemDto: UpdateMenuItemDto) {
+    async updateMenuItem(vendorId: number, itemId: number, updateMenuItemDto: UpdateMenuItemDto): Promise<MenuItem> {
         if (updateMenuItemDto.name) {
             await this.menuItemsRepository.findOne({
                 where: {
@@ -80,11 +80,13 @@ export default class MenuItemsService {
 
         Logger.log(`Menu Item ${itemId} successfully updated`);
 
-        const menuItem = await this.menuItemsRepository.findOne({where: {id: itemId}, relations: {vendor: true}});
-        return mapToMenuItemDto(menuItem!);
+        return this.menuItemsRepository.findOne({where: {id: itemId}, relations: {vendor: true}}).then(menuItem => {
+            if (!menuItem) throw new HttpError('Menu Item Not Found', 404);
+            return menuItem;
+        });
     }
 
-    async removeMenuItem(vendorId: number, itemId: number) {
+    async removeMenuItem(vendorId: number, itemId: number): Promise<void> {
         await this.menuItemsRepository.delete({id: itemId, vendor: {id: vendorId}}).then(result => {
             if (result.affected! < 1) throw new HttpError('No Menu Item Found to Delete', 404);
         });

@@ -1,4 +1,3 @@
-import UserDto, {mapTouserDto} from "./dto/user.dto";
 import HttpError from "../common/errors/http.error";
 import {EntityManager} from "typeorm";
 import {UserType} from "./model/user-type.enum";
@@ -29,10 +28,8 @@ export default class UsersService {
         return user;
     }
 
-    async getProfile(userId: number): Promise<UserDto> {
-        const user = await this.findUserById(userId);
-
-        return mapTouserDto(user);
+    async getProfile(userId: number): Promise<User> {
+        return await this.findUserById(userId);
     }
 
     async findUserById(userId: number) {

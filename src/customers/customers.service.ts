@@ -4,13 +4,12 @@ import Customer from "./models/customer.entity";
 import {CreateCustomerDto} from "./dto/create-customer.dto";
 import UsersService from "../users/users.service";
 import {UserType} from "../users/model/user-type.enum";
-import CustomerDto, {mapToCustomerDto} from "./dto/customer.dto";
 
 export default class CustomersService {
     constructor(private readonly dataSource: DataSource, private readonly usersService: UsersService) {
     }
 
-    async createCustomer(createCustomerDto: CreateCustomerDto): Promise<CustomerDto> {
+    async createCustomer(createCustomerDto: CreateCustomerDto): Promise<Customer> {
         let customer: Customer;
         // This operation is transactional
         await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
@@ -25,6 +24,6 @@ export default class CustomersService {
             Logger.log(`Customer ${createCustomerDto.firstName} created successfully`);
         });
 
-        return mapToCustomerDto(customer!);
+        return customer!;
     }
 }

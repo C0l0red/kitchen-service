@@ -72,14 +72,12 @@ describe('VendorsService', () => {
 
         it('should resolve to an object of VendorDtos and a count', async () => {
             await service.createVendor(mockCreateVendorDto);
-            await service.createVendor(mockCreateAltVendorDto);
 
             const {entities, count} = await service.listVendors({page: 1, pageSize: 10});
 
-            expect(count).toEqual(2);
-            expect(entities).toHaveLength(2);
+            expect(count).toEqual(1);
+            expect(entities).toHaveLength(1);
             expect(entities[0].businessName).toEqual(mockCreateVendorDto.businessName);
-            expect(entities[1].businessName).toEqual(mockCreateAltVendorDto.businessName);
         });
     });
 

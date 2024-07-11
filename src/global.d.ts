@@ -19,6 +19,6 @@ declare global {
     type VendorsRepository = Repository<Vendor>;
     type CustomersRepository = Repository<Customer>;
     type MenuItemsRepository = Repository<MenuItem>;
-    type DtoListAndCount<T> = { entities: Dto<T>[], count: number };
+    type EntityListAndCount<T> = { entities: T[], count: number };
     type Middleware = (request: Request, response: Response, next: NextFunction) => void;
 }
