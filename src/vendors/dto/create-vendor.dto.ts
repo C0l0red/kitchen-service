@@ -14,7 +14,7 @@ export class CreateVendorDto extends CreateUserDto {
     businessDescription: string;
 }
 
-export async function createVendorDtoMapper(object: any): Promise<CreateVendorDto> {
+export async function mapToCreateVendorDto(object: any): Promise<CreateVendorDto> {
     const createVendorDto = new CreateVendorDto();
     createVendorDto.email = object.email;
     createVendorDto.password = object.password;

@@ -15,7 +15,7 @@ export class CreateCustomerDto extends CreateUserDto {
 }
 
 
-export async function createCustomerDtoMapper(object: any): Promise<CreateCustomerDto> {
+export async function mapToCreateCustomerDto(object: any): Promise<CreateCustomerDto> {
     const createCustomerDto = new CreateCustomerDto();
     createCustomerDto.email = object.email;
     createCustomerDto.password = object.password;

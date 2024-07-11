@@ -15,7 +15,7 @@ export default class CreateMenuItemDto {
     price: number;
 }
 
-export async function createMenuItemDtoMapper(object: any): Promise<CreateMenuItemDto> {
+export async function mapToCreateMenuItemDto(object: any): Promise<CreateMenuItemDto> {
     const createMenuItemDto = new CreateMenuItemDto();
     createMenuItemDto.name = object.name;
     createMenuItemDto.description = object.description;

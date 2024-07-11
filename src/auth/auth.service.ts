@@ -1,8 +1,8 @@
 import LoginDto from "./dto/login.dto";
 import UsersService from "../users/users.service";
 import HttpError from "../common/errors/http.error";
-import {jwtPayloadMapper} from "../common/dto/jwt-payload.dto";
-import {tokenDtoMapper} from "./dto/token.dto";
+import {mapToJwtPayload} from "../common/dto/jwt-payload.dto";
+import {mapTotokenDto} from "./dto/token.dto";
 import EncryptionService from "../common/encryption.service";
 import Logger from "../common/logger";
 
@@ -17,11 +17,11 @@ export default class AuthService {
             throw new HttpError("Invalid Credentials", 401);
         }
 
-        const payload = jwtPayloadMapper(user);
+        const payload = mapToJwtPayload(user);
         const token = EncryptionService.generateToken(payload);
 
         Logger.log(`User '${user.email}' logged in successfully`);
 
-        return tokenDtoMapper(token);
+        return mapTotokenDto(token);
     }
 }

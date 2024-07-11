@@ -1,9 +1,9 @@
-import {pagedRequestDtoMapper} from "../common/dto/paged-request.dto";
+import {mapToPagedRequestDto} from "../common/dto/paged-request.dto";
 import VendorsService from "./vendors.service";
 import {Request, Response, NextFunction} from "express";
-import {pagedResponseDtoMapper} from "../common/dto/paged-response.dto";
-import {responseDtoMapper} from "../common/dto/response.dto";
-import {CreateVendorDto, createVendorDtoMapper} from "./dto/create-vendor.dto";
+import {mapToPagedResponseDto} from "../common/dto/paged-response.dto";
+import {mapToresponseDto} from "../common/dto/response.dto";
+import {CreateVendorDto, mapToCreateVendorDto} from "./dto/create-vendor.dto";
 
 export default class VendorsController {
     constructor(private readonly vendorsService: VendorsService) {
@@ -11,9 +11,9 @@ export default class VendorsController {
 
     async createVendor(request: Request, response: Response, next: NextFunction) {
         try {
-            const dto: CreateVendorDto = await createVendorDtoMapper(request.body);
+            const dto: CreateVendorDto = await mapToCreateVendorDto(request.body);
             await this.vendorsService.createVendor(dto);
-            const responseData = responseDtoMapper("Vendor created successful");
+            const responseData = mapToresponseDto("Vendor created successful");
 
             response.status(201).json(responseData);
         } catch (error) {
@@ -23,9 +23,9 @@ export default class VendorsController {
 
     async listVendors(request: Request, response: Response, next: NextFunction) {
         try {
-            const pagedRequest = await pagedRequestDtoMapper(request.query);
+            const pagedRequest = await mapToPagedRequestDto(request.query);
             const data = await this.vendorsService.listVendors(pagedRequest);
-            const pagedResponse = pagedResponseDtoMapper('Vendors fetched successfully', data, pagedRequest);
+            const pagedResponse = mapToPagedResponseDto('Vendors fetched successfully', data, pagedRequest);
 
             response.status(200).json(pagedResponse);
         } catch (error) {
@@ -37,7 +37,7 @@ export default class VendorsController {
         try {
             const vendorId = Number(request.params.vendorId);
             const data = await this.vendorsService.getVendorDetails({id: vendorId});
-            const responseData = responseDtoMapper('Vendor details fetched successfully', data);
+            const responseData = mapToresponseDto('Vendor details fetched successfully', data);
 
             response.status(200).json(responseData);
         } catch (error) {

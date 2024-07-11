@@ -1,7 +1,7 @@
 import Vendor from "./models/vendor.entity";
 import Logger from "../common/logger";
 import HttpError from "../common/errors/http.error";
-import VendorDto, {vendorDtoMapper, vendorListDtoMapper} from "./dto/vendor.dto";
+import VendorDto, {mapToVendorDto, mapToVendorDtoList} from "./dto/vendor.dto";
 import PagedRequestDto from "../common/dto/paged-request.dto";
 import {DataSource} from "typeorm";
 import UsersService from "../users/users.service";
@@ -16,7 +16,8 @@ export default class VendorsService {
     ) {
     }
 
-    async createVendor(createVendorDto: CreateVendorDto): Promise<void> {
+    async createVendor(createVendorDto: CreateVendorDto): Promise<VendorDto> {
+        let vendor: Vendor;
         await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
             await transactionalEntityManager.findOneBy(Vendor, {businessName: createVendorDto.businessName}).then(vendor => {
                 if (vendor) throw new HttpError("Business name taken already", 409);
@@ -24,13 +25,15 @@ export default class VendorsService {
 
             const user = await this.usersService.createUser(createVendorDto, UserType.VENDOR, transactionalEntityManager);
 
-            await transactionalEntityManager.save(Vendor, {
+            vendor = await transactionalEntityManager.save(Vendor, {
                 businessName: createVendorDto.businessName,
                 businessDescription: createVendorDto.businessDescription,
                 user
             });
             Logger.log(`Vendor ${createVendorDto.businessName} created successfully`);
         });
+
+        return mapToVendorDto(vendor!);
     }
 
     async listVendors(pagedRequest: PagedRequestDto): Promise<DtoListAndCount<Vendor>> {
@@ -42,7 +45,7 @@ export default class VendorsService {
         });
 
         return {
-            entities: vendorListDtoMapper(vendors),
+            entities: mapToVendorDtoList(vendors),
             count
         }
     }
@@ -51,7 +54,7 @@ export default class VendorsService {
         return this.vendorsRepository
             .findOne({where, relations: {user: true}}).then(vendor => {
                 if (!vendor) throw new HttpError("Vendor not found", 404);
-                return vendorDtoMapper(vendor);
+                return mapToVendorDto(vendor);
             });
     }
 }

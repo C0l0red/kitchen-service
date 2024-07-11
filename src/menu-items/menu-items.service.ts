@@ -2,7 +2,7 @@ import HttpError from "../common/errors/http.error";
 import CreateMenuItemDto from "./dto/create-menu-item.dto";
 import UpdateMenuItemDto from "./dto/update-menu-item.dto";
 import Logger from "../common/logger";
-import {menuItemDtoMapper, menuItemListDtoMapper} from "./dto/menu-item.dto";
+import {mapToMenuItemDto, mapToMenuItemDtoList} from "./dto/menu-item.dto";
 import MenuItem from "./models/menu-item.entity";
 import PagedRequestDto from "../common/dto/paged-request.dto";
 import VendorsService from "../vendors/vendors.service";
@@ -30,7 +30,7 @@ export default class MenuItemsService {
 
         Logger.log(`Menu Item ${menuItem.name} added`);
 
-        return menuItemDtoMapper(menuItem);
+        return mapToMenuItemDto(menuItem);
     }
 
     async listMenuItemsForVendor(pagedRequest: PagedRequestDto, vendorId?: number): Promise<DtoListAndCount<MenuItem>> {
@@ -45,15 +45,18 @@ export default class MenuItemsService {
         });
 
         return {
-            entities: menuItemListDtoMapper(menuItems),
+            entities: mapToMenuItemDtoList(menuItems),
             count
         }
     }
 
     async getMenuItemDetails(vendorId: number, itemId: number) {
-        return this.menuItemsRepository.findOneBy({vendor: {id: vendorId}, id: itemId}).then(menuItem => {
+        return this.menuItemsRepository.findOne({
+            where: {vendor: {id: vendorId}, id: itemId},
+            relations: ['vendor']
+        }).then(menuItem => {
             if (!menuItem) throw new HttpError('Menu Item Not Found', 404);
-            return menuItem;
+            return mapToMenuItemDto(menuItem);
         });
     }
 
@@ -78,7 +81,7 @@ export default class MenuItemsService {
         Logger.log(`Menu Item ${itemId} successfully updated`);
 
         const menuItem = await this.menuItemsRepository.findOne({where: {id: itemId}, relations: {vendor: true}});
-        return menuItemDtoMapper(menuItem!);
+        return mapToMenuItemDto(menuItem!);
     }
 
     async removeMenuItem(vendorId: number, itemId: number) {

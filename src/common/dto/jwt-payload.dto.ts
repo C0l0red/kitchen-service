@@ -1,7 +1,7 @@
 import User from "../../users/model/user.entity";
 import {JwtPayload} from "jsonwebtoken";
 
-export function jwtPayloadMapper(user: User): JwtPayload {
+export function mapToJwtPayload(user: User): JwtPayload {
     return {
         sub: user.email,
         id: user.id,

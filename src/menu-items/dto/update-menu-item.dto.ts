@@ -16,7 +16,7 @@ export default class UpdateMenuItemDto {
     price?: number;
 }
 
-export async function updateMenuItemDtoMapper(object: any): Promise<UpdateMenuItemDto> {
+export async function mapToUpdateMenuItemDto(object: any): Promise<UpdateMenuItemDto> {
     const updateMenuItemDto = new UpdateMenuItemDto();
     updateMenuItemDto.name = object.name;
     updateMenuItemDto.description = object.description;

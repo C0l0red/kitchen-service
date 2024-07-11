@@ -98,10 +98,10 @@ describe('MenuItemsService', () => {
 
     describe('getMenuItemDetails', () => {
         it('should call findOneBy() once', async () => {
-            const spyOnFindOneBy = jest.spyOn(menuItemsRepository, 'findOneBy');
+            const spyOnFindOne = jest.spyOn(menuItemsRepository, 'findOne');
             const menuItem = await service.getMenuItemDetails(testVendor.id, testMenuItem.id);
 
-            expect(spyOnFindOneBy).toHaveBeenCalledTimes(1);
+            expect(spyOnFindOne).toHaveBeenCalledTimes(1);
             expect(menuItem.name).toEqual(testMenuItem.name);
         });
 

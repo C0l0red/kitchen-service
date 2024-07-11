@@ -19,12 +19,12 @@ import createMenuItemsModule from "./menu-items";
 import MenuItem from "./menu-items/models/menu-item.entity";
 import PermissionsMiddleware from "./middleware/permissions.middleware";
 import {DatabaseManager} from "./data-source";
-import {responseDtoMapper} from "./common/dto/response.dto";
+import {mapToresponseDto} from "./common/dto/response.dto";
 
 const indexRouter = Router();
 
 indexRouter.get("/", (request: Request, response: Response) => {
-    const responseData = responseDtoMapper("API is live! Hit /docs to visit the Postman documentation");
+    const responseData = mapToresponseDto("API is live! Hit /docs to visit the Postman documentation");
     response.json(responseData);
 })
 

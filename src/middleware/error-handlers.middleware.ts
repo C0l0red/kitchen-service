@@ -35,9 +35,8 @@ export const invalidPathHandlerMiddleware = (
     response: Response,
     next: NextFunction,
 ) => {
-    const notFoundError = {
-        error: 'Not Found',
-        message: 'Path not found',
-    };
+    const notFoundError = new HttpError("Path Not Found", 404);
+    notFoundError.path = request.path;
+
     response.status(404).json(notFoundError);
 };

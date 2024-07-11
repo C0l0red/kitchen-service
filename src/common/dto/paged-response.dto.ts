@@ -9,7 +9,7 @@ export default class PagedResponseDto<T> {
     totalItems: number;
 }
 
-export function pagedResponseDtoMapper<T>(
+export function mapToPagedResponseDto<T>(
     message: string,
     dtosAndCount: DtoListAndCount<T>,
     pagedRequest: PagedRequestDto,

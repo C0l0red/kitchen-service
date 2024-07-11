@@ -2,7 +2,7 @@ export default class TokenDto {
     token: string;
 }
 
-export function tokenDtoMapper(token: string): TokenDto {
+export function mapTotokenDto(token: string): TokenDto {
     return {
         token
     }

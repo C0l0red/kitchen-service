@@ -9,7 +9,7 @@ export default class LoginDto {
     password: string;
 }
 
-export async function loginDtoMapper(object: any) {
+export async function mapToLoginDto(object: any) {
     const dto = new LoginDto();
     dto.email = object.email;
     dto.password = object.password;
