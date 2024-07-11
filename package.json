@@ -8,7 +8,7 @@
     "prestart:dev": "npm run build",
     "start": "node dist/src/server.js",
     "start:dev": "ts-node src/server.ts",
-    "test": "LOGGING=false jest --rootDir src",
+    "test": "LOGGING=false jest --runInBand --rootDir src",
     "test:e2e": "LOGGING=false jest --runInBand --rootDir tests"
   },
   "keywords": [],

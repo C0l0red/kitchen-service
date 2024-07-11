@@ -7,6 +7,7 @@ import VendorsService from "../vendors/vendors.service";
 const createMenuItemsModule = (
     menuItemsRepository: MenuItemsRepository,
     permissionsMiddleware: PermissionsMiddleware,
+    authorizationMiddleware: Middleware,
     vendorsService: VendorsService,
 ) => {
     const menuItemsService = new MenuItemsService(menuItemsRepository, vendorsService);
@@ -14,18 +15,20 @@ const createMenuItemsModule = (
 
     const router = Router();
 
-    router.post('', permissionsMiddleware.isVendor, menuItemsController.createMenuItem.bind(menuItemsController));
-    router.get('/:vendorId/:menuItemId', menuItemsController.getMenuItem.bind(menuItemsController));
-    router.get('/:vendorId', menuItemsController.listMenuItemsForVendor.bind(menuItemsController));
-    router.get('', menuItemsController.listAllMenuItems.bind(menuItemsController));
+    router.post('', authorizationMiddleware, permissionsMiddleware.isVendor, menuItemsController.createMenuItem.bind(menuItemsController));
+    router.get('/:vendorId/:menuItemId', authorizationMiddleware, menuItemsController.getMenuItem.bind(menuItemsController));
+    router.get('/:vendorId', authorizationMiddleware, menuItemsController.listMenuItemsForVendor.bind(menuItemsController));
+    router.get('', authorizationMiddleware, menuItemsController.listAllMenuItems.bind(menuItemsController));
     router.patch(
         '/:vendorId/:menuItemId',
+        authorizationMiddleware,
         permissionsMiddleware.isVendor,
         permissionsMiddleware.ownsVendorAccount,
         menuItemsController.updateMenuItem.bind(menuItemsController),
     );
     router.delete(
         '/:vendorId/:menuItemId',
+        authorizationMiddleware,
         permissionsMiddleware.isVendor,
         permissionsMiddleware.ownsVendorAccount,
         menuItemsController.removeMenuItem.bind(menuItemsController),

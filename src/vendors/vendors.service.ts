@@ -1,17 +1,18 @@
-import {CreateVendorDto} from "../auth/dto/register.dto";
 import Vendor from "./models/vendor.entity";
-import {UserType} from "../users/model/user-type.enum";
 import Logger from "../common/logger";
 import HttpError from "../common/errors/http.error";
 import VendorDto, {vendorDtoMapper, vendorListDtoMapper} from "./dto/vendor.dto";
 import PagedRequestDto from "../common/dto/paged-request.dto";
-import User from "../users/model/user.entity";
 import {DataSource} from "typeorm";
+import UsersService from "../users/users.service";
+import {CreateVendorDto} from "./dto/create-vendor.dto";
+import {UserType} from "../users/model/user-type.enum";
 
 export default class VendorsService {
     constructor(
         private readonly vendorsRepository: VendorsRepository,
-        private readonly dataSource: DataSource
+        private readonly dataSource: DataSource,
+        private readonly usersService: UsersService,
     ) {
     }
 
@@ -21,14 +22,7 @@ export default class VendorsService {
                 if (vendor) throw new HttpError("Business name taken already", 409);
             });
 
-            let user = transactionalEntityManager.create(User, {
-                email: createVendorDto.email,
-                password: createVendorDto.password,
-                phoneNumber: createVendorDto.phoneNumber,
-                userType: UserType.VENDOR,
-            });
-            user = await transactionalEntityManager.save(user);
-            Logger.log(`New user '${user.email}' created successfully`);
+            const user = await this.usersService.createUser(createVendorDto, UserType.VENDOR, transactionalEntityManager);
 
             await transactionalEntityManager.save(Vendor, {
                 businessName: createVendorDto.businessName,

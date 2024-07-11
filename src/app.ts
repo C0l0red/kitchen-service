@@ -8,9 +8,7 @@ import {
 } from "./middleware/error-handlers.middleware";
 import Logger from "./common/logger";
 import {authorizationMiddleware} from "./middleware/authorization.middleware";
-import ConfigException from "./common/errors/config.exception";
 import * as bodyParser from "body-parser";
-import {DataSource} from "typeorm";
 import createUsersModule from "./users";
 import User from "./users/model/user.entity";
 import createCustomersModule from "./customers";
@@ -20,11 +18,14 @@ import Vendor from "./vendors/models/vendor.entity";
 import createMenuItemsModule from "./menu-items";
 import MenuItem from "./menu-items/models/menu-item.entity";
 import PermissionsMiddleware from "./middleware/permissions.middleware";
+import {DatabaseManager} from "./data-source";
+import {responseDtoMapper} from "./common/dto/response.dto";
 
 const indexRouter = Router();
 
 indexRouter.get("/", (request: Request, response: Response) => {
-    response.send("API is live! Hit /docs to visit the Postman documentation");
+    const responseData = responseDtoMapper("API is live! Hit /docs to visit the Postman documentation");
+    response.json(responseData);
 })
 
 indexRouter.get("/docs", (request: Request, response: Response) => {
@@ -35,16 +36,13 @@ export default class ExpressApp {
     private readonly app: Express;
     private readonly server: Server;
 
-    constructor(private readonly dataSource: DataSource) {
+    constructor(private readonly databaseManager: DatabaseManager) {
         this.app = express();
         this.server = createServer(this.app);
     }
 
     getDataSource() {
-        if (!this.dataSource.isInitialized) {
-            throw new ConfigException("Data Source is not initialized yet");
-        }
-        return this.dataSource;
+        return this.databaseManager.getDataSource();
     }
 
     getApp() {
@@ -64,41 +62,32 @@ export default class ExpressApp {
     }
 
     private async initializeDatasource() {
-        await this.dataSource.initialize()
-            .then(() => {
-                Logger.log("Datasource is connected");
-            }).catch(error => {
-                throw new ConfigException("Datasource failed to connect", error);
-            })
+        await this.databaseManager.initializeDatasource();
     }
 
     async destroyDatabase() {
-        await this.dataSource.dropDatabase();
-        await this.dataSource.destroy();
+        await this.databaseManager.destroyDatabase();
     }
 
     async initializeApp() {
         await this.initializeDatasource();
+        const dataSource = this.getDataSource();
 
-        const permissionsMiddleware = new PermissionsMiddleware(this.dataSource.getRepository(Vendor));
+        const permissionsMiddleware = new PermissionsMiddleware(dataSource.getRepository(Vendor));
 
-        const usersModule = createUsersModule(this.dataSource.getRepository(User));
-        const vendorsModule = createVendorsModule(this.dataSource);
-        const customersModule = createCustomersModule(this.dataSource);
-        const authModule = createAuthModule(
-            usersModule.usersService,
-            vendorsModule.vendorsService,
-            customersModule.customersService
-        );
+        const usersModule = createUsersModule(dataSource.getRepository(User), authorizationMiddleware);
+        const vendorsModule = createVendorsModule(dataSource, usersModule.usersService, authorizationMiddleware);
+        const customersModule = createCustomersModule(dataSource, usersModule.usersService);
+        const authModule = createAuthModule(usersModule.usersService);
         const menuItemsModule = createMenuItemsModule(
-            this.dataSource.getRepository(MenuItem),
+            dataSource.getRepository(MenuItem),
             permissionsMiddleware,
+            authorizationMiddleware,
             vendorsModule.vendorsService
         );
 
         this.app.use(bodyParser.json());
         this.app.use(requestLoggerMiddleware);
-        this.app.use(authorizationMiddleware);
 
         this.app.use(indexRouter);
         this.app.use('/auth', authModule.router);

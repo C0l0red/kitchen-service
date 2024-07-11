@@ -3,9 +3,22 @@ import VendorsService from "./vendors.service";
 import {Request, Response, NextFunction} from "express";
 import {pagedResponseDtoMapper} from "../common/dto/paged-response.dto";
 import {responseDtoMapper} from "../common/dto/response.dto";
+import {CreateVendorDto, createVendorDtoMapper} from "./dto/create-vendor.dto";
 
 export default class VendorsController {
     constructor(private readonly vendorsService: VendorsService) {
+    }
+
+    async createVendor(request: Request, response: Response, next: NextFunction) {
+        try {
+            const dto: CreateVendorDto = await createVendorDtoMapper(request.body);
+            await this.vendorsService.createVendor(dto);
+            const responseData = responseDtoMapper("Vendor created successful");
+
+            response.status(201).json(responseData);
+        } catch (error) {
+            next(error);
+        }
     }
 
     async listVendors(request: Request, response: Response, next: NextFunction) {

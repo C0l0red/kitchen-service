@@ -3,18 +3,12 @@ import HttpError from "../common/errors/http.error";
 import EncryptionService from "../common/encryption.service";
 import AuthenticatedRequest from "../common/interfaces/authenticated-request";
 
-const privateResources = ['/menu-items', '/vendors', '/users'];
 
 export const authorizationMiddleware = (
     request: Request,
     response: Response,
     next: NextFunction
 ) => {
-    if (!privateResources.some(resource => request.url.startsWith(resource))) {
-        next();
-        return;
-    }
-
     const authHeader = request.headers.authorization;
     if (authHeader) {
         const token = authHeader.split(" ")[1];

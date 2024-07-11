@@ -2,7 +2,6 @@ import {Request, Response, NextFunction} from "express";
 import AuthenticatedRequest from "../common/interfaces/authenticated-request";
 import {UserType} from "../users/model/user-type.enum";
 import HttpError from "../common/errors/http.error";
-import Logger from "../common/logger";
 
 export default class PermissionsMiddleware {
     constructor(private readonly vendorsRepository: VendorsRepository) {

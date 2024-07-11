@@ -1,4 +1,4 @@
-import {IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString, validate} from "class-validator";
+import {IsNotEmpty, IsNumber, IsOptional, IsString, validate} from "class-validator";
 import RequestValidationError from "../../common/errors/request-validation.error";
 
 export default class CreateMenuItemDto {

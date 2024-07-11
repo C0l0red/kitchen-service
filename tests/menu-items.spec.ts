@@ -6,13 +6,14 @@ import {dataSource} from "./data";
 import {
     mockCreateMenuItemAlfredoDto, mockCreateMenuItemGizdodoDto, mockCreateMenuItemPizzaDto, mockLoginDtoForAltVendor,
     mockLoginDtoForCustomer,
-    mockLoginDtoForVendor, mockRegisterAltVendorDto,
+    mockLoginDtoForVendor, mockCreateAltVendorDto,
     mockCreateCustomerDto,
     mockCreateVendorDto
 } from "./mocks";
 import UpdateMenuItemDto from "../src/menu-items/dto/update-menu-item.dto";
-import {CreateVendorDto} from "../src/auth/dto/register.dto";
 import LoginDto from "../src/auth/dto/login.dto";
+import {CreateVendorDto} from "../src/vendors/dto/create-vendor.dto";
+import { DatabaseManager } from "../src/data-source";
 
 describe('Menu Items Resource', () => {
     let expressApp: ExpressApp;
@@ -22,19 +23,20 @@ describe('Menu Items Resource', () => {
     let altVendorAuthHeader: string;
 
     beforeEach(async () => {
-        expressApp = new ExpressApp(dataSource);
+        const databaseManager = new DatabaseManager(dataSource);
+        expressApp = new ExpressApp(databaseManager);
         await expressApp.initializeApp();
         app = expressApp.getApp();
 
         vendorAuthHeader = await setupVendor(mockCreateVendorDto, mockLoginDtoForVendor);
-        altVendorAuthHeader = await setupVendor(mockRegisterAltVendorDto, mockLoginDtoForAltVendor);
+        altVendorAuthHeader = await setupVendor(mockCreateAltVendorDto, mockLoginDtoForAltVendor);
         await setupCustomer();
         await setupMenuItems();
     });
 
     const setupVendor = async (registerDto: CreateVendorDto, loginDto: LoginDto) => {
         await request(app)
-            .post('/auth/register-vendor')
+            .post('/vendors')
             .set('Accept', 'application/json')
             .send(registerDto)
             .expect(201);
@@ -52,7 +54,7 @@ describe('Menu Items Resource', () => {
 
     const setupCustomer = async () => {
         await request(app)
-            .post('/auth/register-customer')
+            .post('/customers')
             .set('Accept', 'application/json')
             .send(mockCreateCustomerDto)
             .expect(201);
