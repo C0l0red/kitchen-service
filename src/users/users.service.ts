@@ -47,7 +47,8 @@ export default class UsersService {
     async findUserByEmail(email: string, includePassword?: boolean) {
         return this.usersRepository.findOne({
             where: {email},
-            select: includePassword ? ['id', 'email', 'password', 'userType'] : ['id', 'email', 'userType']
+            select: includePassword ? ['id', 'email', 'password', 'userType'] : ['id', 'email', 'userType'],
+            relations: ['vendor']
         });
     }
 }

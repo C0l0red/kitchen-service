@@ -16,21 +16,20 @@ const createMenuItemsModule = (
     const router = Router();
 
     router.post('', authorizationMiddleware, permissionsMiddleware.isVendor, menuItemsController.createMenuItem.bind(menuItemsController));
-    router.get('/:vendorId/:menuItemId', authorizationMiddleware, menuItemsController.getMenuItem.bind(menuItemsController));
-    router.get('/:vendorId', authorizationMiddleware, menuItemsController.listMenuItemsForVendor.bind(menuItemsController));
-    router.get('', authorizationMiddleware, menuItemsController.listAllMenuItems.bind(menuItemsController));
+    router.get('/:menuItemId', authorizationMiddleware, menuItemsController.getMenuItem.bind(menuItemsController));
+    router.get('', authorizationMiddleware, menuItemsController.listMenuItems.bind(menuItemsController));
     router.patch(
-        '/:vendorId/:menuItemId',
+        '/:menuItemId',
         authorizationMiddleware,
         permissionsMiddleware.isVendor,
-        permissionsMiddleware.ownsVendorAccount,
+        permissionsMiddleware.ownsMenuItem,
         menuItemsController.updateMenuItem.bind(menuItemsController),
     );
     router.delete(
-        '/:vendorId/:menuItemId',
+        '/:menuItemId',
         authorizationMiddleware,
         permissionsMiddleware.isVendor,
-        permissionsMiddleware.ownsVendorAccount,
+        permissionsMiddleware.ownsMenuItem,
         menuItemsController.removeMenuItem.bind(menuItemsController),
     );
 

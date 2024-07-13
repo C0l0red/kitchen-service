@@ -2,10 +2,10 @@ import HttpError from "../common/errors/http.error";
 import CreateMenuItemDto from "./dto/create-menu-item.dto";
 import UpdateMenuItemDto from "./dto/update-menu-item.dto";
 import Logger from "../common/logger";
-import {mapToMenuItemDto, mapToMenuItemDtoList} from "./dto/menu-item.dto";
 import MenuItem from "./models/menu-item.entity";
 import PagedRequestDto from "../common/dto/paged-request.dto";
 import VendorsService from "../vendors/vendors.service";
+import MenuItemListFilterDto from "./dto/menu-item-list-filter.dto";
 
 export default class MenuItemsService {
     constructor(
@@ -33,8 +33,10 @@ export default class MenuItemsService {
         return menuItem;
     }
 
-    async listMenuItems(pagedRequest: PagedRequestDto, vendorId?: number): Promise<EntityListAndCount<MenuItem>> {
-        const where = vendorId ? {vendor: {id: vendorId}} : {};
+    async listMenuItems(pagedRequest: PagedRequestDto, filterDto: MenuItemListFilterDto): Promise<EntityListAndCount<MenuItem>> {
+        const where = {
+            ...(filterDto.vendorId && {vendor: {id: filterDto.vendorId}}), //Object spreading with a conditional property
+        };
 
         const [menuItems, count] = await this.menuItemsRepository.findAndCount({
             where,
@@ -50,9 +52,9 @@ export default class MenuItemsService {
         }
     }
 
-    async getMenuItemDetails(vendorId: number, itemId: number): Promise<MenuItem> {
+    async getMenuItemDetails(itemId: number): Promise<MenuItem> {
         return this.menuItemsRepository.findOne({
-            where: {vendor: {id: vendorId}, id: itemId},
+            where: {id: itemId},
             relations: ['vendor']
         }).then(menuItem => {
             if (!menuItem) throw new HttpError('Menu Item Not Found', 404);
@@ -60,12 +62,12 @@ export default class MenuItemsService {
         });
     }
 
-    async updateMenuItem(vendorId: number, itemId: number, updateMenuItemDto: UpdateMenuItemDto): Promise<MenuItem> {
+    async updateMenuItem(itemId: number, userId: number, updateMenuItemDto: UpdateMenuItemDto): Promise<MenuItem> {
         if (updateMenuItemDto.name) {
             await this.menuItemsRepository.findOne({
                 where: {
                     name: updateMenuItemDto.name,
-                    vendor: {id: vendorId}
+                    vendor: {user: {id: userId}},
                 }
             }).then(menuItem => {
                 if (menuItem && menuItem.id != itemId) {
@@ -74,7 +76,7 @@ export default class MenuItemsService {
             });
         }
 
-        await this.menuItemsRepository.update({id: itemId, vendor: {id: vendorId}}, updateMenuItemDto).then(result => {
+        await this.menuItemsRepository.update({id: itemId}, updateMenuItemDto).then(result => {
             if (result.affected! < 1) throw new HttpError('No Menu Item Found to Update', 404);
         });
 
@@ -86,8 +88,8 @@ export default class MenuItemsService {
         });
     }
 
-    async removeMenuItem(vendorId: number, itemId: number): Promise<void> {
-        await this.menuItemsRepository.delete({id: itemId, vendor: {id: vendorId}}).then(result => {
+    async removeMenuItem(itemId: number): Promise<void> {
+        await this.menuItemsRepository.delete({id: itemId}).then(result => {
             if (result.affected! < 1) throw new HttpError('No Menu Item Found to Delete', 404);
         });
 

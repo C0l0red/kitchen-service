@@ -4,8 +4,8 @@ import {UserType} from "../users/model/user-type.enum";
 import HttpError from "../common/errors/http.error";
 
 export default class PermissionsMiddleware {
-    constructor(private readonly vendorsRepository: VendorsRepository) {
-        this.ownsVendorAccount = this.ownsVendorAccount.bind(this);
+    constructor(private readonly menuItemsRepository: MenuItemsRepository) {
+        this.ownsMenuItem = this.ownsMenuItem.bind(this);
     }
 
 
@@ -20,12 +20,18 @@ export default class PermissionsMiddleware {
         next();
     }
 
-    async ownsVendorAccount(request: Request, response: Response, next: NextFunction) {
-        const userId = (request as AuthenticatedRequest).userId;
-        const vendorId = Number(request.params.vendorId);
+    async ownsMenuItem(request: Request, response: Response, next: NextFunction) {
+        const vendorId = (request as AuthenticatedRequest).vendorId;
+        const menuItemId = Number(request.params.menuItemId);
 
-        await this.vendorsRepository.findOne({where: {id: vendorId, user: {id: userId}}}).then(vendor => {
-            if (!vendor) next(new HttpError('You are not authorized to use this endpoint', 403));
+        await this.menuItemsRepository.findOne({
+            where: {
+                id: menuItemId,
+            }, relations: {vendor: true}
+        }).then(menuItem => {
+            if (menuItem && menuItem.vendor.id != vendorId) {
+                next(new HttpError('You are not authorized to use this endpoint', 403));
+            }
             return;
         });
 

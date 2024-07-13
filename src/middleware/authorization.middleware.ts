@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express";
 import HttpError from "../common/errors/http.error";
 import EncryptionService from "../common/encryption.service";
 import AuthenticatedRequest from "../common/interfaces/authenticated-request";
+import Auth from "../auth";
 
 
 export const authorizationMiddleware = (
@@ -19,6 +20,7 @@ export const authorizationMiddleware = (
             (request as AuthenticatedRequest).email = jwtPayload.sub!;
             (request as AuthenticatedRequest).userId = jwtPayload.id;
             (request as AuthenticatedRequest).userType = jwtPayload.userType;
+            (request as AuthenticatedRequest).vendorId = jwtPayload.vendorId;
 
             next();
             return;

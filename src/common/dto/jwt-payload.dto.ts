@@ -6,5 +6,6 @@ export function mapToJwtPayload(user: User): JwtPayload {
         sub: user.email,
         id: user.id,
         userType: user.userType,
+        vendorId: user.vendor?.id,
     }
 }

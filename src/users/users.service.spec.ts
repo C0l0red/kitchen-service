@@ -118,7 +118,8 @@ describe("Users Service", () => {
             expect(spyOnFindOne).toHaveBeenCalledTimes(1);
             expect(spyOnFindOne).toHaveBeenCalledWith({
                 where: {email: testUser.email},
-                select: ['id', 'email', 'userType']
+                select: ['id', 'email', 'userType'],
+                relations: ['vendor']
             });
         });
 
@@ -129,7 +130,8 @@ describe("Users Service", () => {
             expect(spyOnFindOne).toHaveBeenCalledTimes(1);
             expect(spyOnFindOne).toHaveBeenCalledWith({
                 where: {email: testUser.email},
-                select: ['id', 'email', 'password', 'userType']
+                select: ['id', 'email', 'password', 'userType'],
+                relations: ['vendor']
             });
         });
     });

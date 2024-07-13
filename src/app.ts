@@ -73,7 +73,7 @@ export default class ExpressApp {
         await this.initializeDatasource();
         const dataSource = this.getDataSource();
 
-        const permissionsMiddleware = new PermissionsMiddleware(dataSource.getRepository(Vendor));
+        const permissionsMiddleware = new PermissionsMiddleware(dataSource.getRepository(MenuItem));
 
         const usersModule = createUsersModule(dataSource.getRepository(User), authorizationMiddleware);
         const vendorsModule = createVendorsModule(dataSource, usersModule.usersService, authorizationMiddleware);

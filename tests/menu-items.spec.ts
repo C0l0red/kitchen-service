@@ -13,7 +13,7 @@ import {
 import UpdateMenuItemDto from "../src/menu-items/dto/update-menu-item.dto";
 import LoginDto from "../src/auth/dto/login.dto";
 import {CreateVendorDto} from "../src/vendors/dto/create-vendor.dto";
-import { DatabaseManager } from "../src/data-source";
+import {DatabaseManager} from "../src/data-source";
 
 describe('Menu Items Resource', () => {
     let expressApp: ExpressApp;
@@ -100,7 +100,7 @@ describe('Menu Items Resource', () => {
                 .expect(201);
 
             const response = await request(app)
-                .get('/menu-items/1/3')
+                .get('/menu-items/3')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .expect(200);
@@ -128,10 +128,10 @@ describe('Menu Items Resource', () => {
         });
     });
 
-    describe('GET /menu-items/:vendorId/:menuItemId', () => {
+    describe('GET /menu-items/:menuItemId', () => {
         it('should respond with an exising menu item', async () => {
             const response = await request(app)
-                .get('/menu-items/1/1')
+                .get('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', customerAuthHeader)
                 .expect(200);
@@ -142,28 +142,28 @@ describe('Menu Items Resource', () => {
 
         it('should respond with a 404 for a non-existent menu item', async () => {
             await request(app)
-                .get('/menu-items/2/1')
+                .get('/menu-items/4')
                 .set('Accept', 'application/json')
                 .set('Authorization', customerAuthHeader)
                 .expect(404);
         });
     });
 
-    describe('PATCH /menu-items/:vendorId', () => {
+    describe('PATCH /menu-items/:menuItemId', () => {
         it('should update a menu item', async () => {
             const updateMenuItemDto: UpdateMenuItemDto = {
                 name: 'Updated Name'
             };
 
             await request(app)
-                .patch('/menu-items/1/1')
+                .patch('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .send(updateMenuItemDto)
                 .expect(200);
 
             const response = await request(app)
-                .get('/menu-items/1/1')
+                .get('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .expect(200);
@@ -177,7 +177,7 @@ describe('Menu Items Resource', () => {
             };
 
             await request(app)
-                .patch('/menu-items/1/1')
+                .patch('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .send(updateMenuItemDto)
@@ -193,7 +193,7 @@ describe('Menu Items Resource', () => {
                 .expect(201);
 
             await request(app)
-                .patch('/menu-items/2/3')
+                .patch('/menu-items/3')
                 .set('Accept', 'application/json')
                 .set('Authorization', altVendorAuthHeader)
                 .send(mockCreateMenuItemPizzaDto) // Already exists for vendor 1
@@ -202,7 +202,7 @@ describe('Menu Items Resource', () => {
 
         it('should respond with a 403 for an unpermitted user', async () => {
             await request(app)
-                .patch('/menu-items/1/1') // VendorId for main vendor 
+                .patch('/menu-items/1') // VendorId for main vendor
                 .set('Accept', 'application/json')
                 .set('Authorization', altVendorAuthHeader)
                 .send(mockCreateMenuItemAlfredoDto)
@@ -210,16 +210,16 @@ describe('Menu Items Resource', () => {
         });
     });
 
-    describe('DELETE /menu-items/:vendorId', () => {
+    describe('DELETE /menu-items/:menuItemId', () => {
         it('should delete a menu item', async () => {
             await request(app)
-                .delete('/menu-items/1/1')
+                .delete('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .expect(200);
 
             await request(app)
-                .get('/menu-items/1/1')
+                .get('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .expect(404);
@@ -227,13 +227,13 @@ describe('Menu Items Resource', () => {
 
         it('should respond with a 404 for an already deleted menu item', async () => {
             await request(app)
-                .delete('/menu-items/1/1')
+                .delete('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .expect(200);
 
             await request(app)
-                .delete('/menu-items/1/1')
+                .delete('/menu-items/1')
                 .set('Accept', 'application/json')
                 .set('Authorization', vendorAuthHeader)
                 .expect(404);
@@ -241,7 +241,7 @@ describe('Menu Items Resource', () => {
 
         it('should respond with a 403 for an unpermitted user', async () => {
             await request(app)
-                .delete('/menu-items/1/1') // VendorId for main vendor 
+                .delete('/menu-items/1') // VendorId for main vendor
                 .set('Accept', 'application/json')
                 .set('Authorization', altVendorAuthHeader)
                 .expect(403);

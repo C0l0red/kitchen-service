@@ -7,6 +7,7 @@ import {mapToPagedRequestDto} from "../common/dto/paged-request.dto";
 import {mapToUpdateMenuItemDto} from "./dto/update-menu-item.dto";
 import {mapToPagedResponseDto} from "../common/dto/paged-response.dto";
 import {mapToMenuItemDto, mapToMenuItemDtoList} from "./dto/menu-item.dto";
+import {mapToMenuItemListFilterDto} from "./dto/menu-item-list-filter.dto";
 
 export default class MenuItemsController {
     constructor(private readonly menuItemsService: MenuItemsService) {
@@ -25,10 +26,11 @@ export default class MenuItemsController {
         }
     }
 
-    async listAllMenuItems(request: Request, response: Response, next: NextFunction) {
+    async listMenuItems(request: Request, response: Response, next: NextFunction) {
         try {
+            const filterDto = await mapToMenuItemListFilterDto(request.query);
             const pagedRequest = await mapToPagedRequestDto(request.query);
-            const entitiesAndCount = await this.menuItemsService.listMenuItems(pagedRequest);
+            const entitiesAndCount = await this.menuItemsService.listMenuItems(pagedRequest, filterDto);
             const responseData = mapToPagedResponseDto(
                 'Menu Items fetched successfully',
                 entitiesAndCount,
@@ -42,24 +44,10 @@ export default class MenuItemsController {
         }
     }
 
-    async listMenuItemsForVendor(request: Request, response: Response, next: NextFunction) {
-        try {
-            const vendorId = Number(request.params.vendorId);
-            const pagedRequest = await mapToPagedRequestDto(request.query);
-            const entitiesAndCount = await this.menuItemsService.listMenuItems(pagedRequest, vendorId);
-            const responseData = mapToPagedResponseDto('Menu Items fetched successfully', entitiesAndCount, pagedRequest, mapToMenuItemDtoList);
-
-            response.status(200).json(responseData);
-        } catch (error) {
-            next(error);
-        }
-    }
-
     async getMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
             const menuItemId = Number(request.params.menuItemId);
-            const vendorId = Number(request.params.vendorId);
-            const menuItem = await this.menuItemsService.getMenuItemDetails(vendorId, menuItemId);
+            const menuItem = await this.menuItemsService.getMenuItemDetails(menuItemId);
             const responseData = mapToresponseDto('Menu Item fetched successfully', menuItem, mapToMenuItemDto);
 
             response.status(200).json(responseData);
@@ -70,11 +58,11 @@ export default class MenuItemsController {
 
     async updateMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
-            const vendorId = Number(request.params.vendorId);
+            const userId = (request as AuthenticatedRequest).userId;
             const itemId = Number(request.params.menuItemId);
             const dto = await mapToUpdateMenuItemDto(request.body);
 
-            const menuItem = await this.menuItemsService.updateMenuItem(vendorId, itemId, dto);
+            const menuItem = await this.menuItemsService.updateMenuItem(itemId, userId, dto);
             const responseData = mapToresponseDto('Menu Item updated successfully', menuItem, mapToMenuItemDto);
 
             response.status(200).json(responseData);
@@ -85,9 +73,8 @@ export default class MenuItemsController {
 
     async removeMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
-            const vendorId = Number(request.params.vendorId);
             const itemId = Number(request.params.menuItemId);
-            await this.menuItemsService.removeMenuItem(vendorId, itemId);
+            await this.menuItemsService.removeMenuItem(itemId);
             const responseData = mapToresponseDto('Menu Item deleted successfully');
 
             response.status(200).json(responseData)
