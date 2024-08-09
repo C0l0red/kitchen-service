@@ -2,10 +2,10 @@ import HttpError from "../common/errors/http.error";
 import CreateMenuItemDto from "./dto/create-menu-item.dto";
 import UpdateMenuItemDto from "./dto/update-menu-item.dto";
 import Logger from "../common/logger";
-import {buildMenuItemDto, buildMenuItemListDto} from "./dto/menu-item.dto";
 import MenuItem from "./models/menu-item.entity";
 import PagedRequestDto from "../common/dto/paged-request.dto";
 import VendorsService from "../vendors/vendors.service";
+import MenuItemListFilterDto from "./dto/menu-item-list-filter.dto";
 
 export default class MenuItemsService {
     constructor(
@@ -14,7 +14,7 @@ export default class MenuItemsService {
     ) {
     }
 
-    async createMenuItem(userId: number, createMenuItemDto: CreateMenuItemDto) {
+    async createMenuItem(userId: number, createMenuItemDto: CreateMenuItemDto): Promise<MenuItem> {
         const vendor = await this.vendorsService.getVendorDetails({user: {id: userId}});
         await this.menuItemsRepository.findOneBy({
             vendor: {id: vendor.id},
@@ -30,11 +30,13 @@ export default class MenuItemsService {
 
         Logger.log(`Menu Item ${menuItem.name} added`);
 
-        return buildMenuItemDto(menuItem);
+        return menuItem;
     }
 
-    async listMenuItemsForVendor(pagedRequest: PagedRequestDto, vendorId?: number): Promise<DtoListAndCount<MenuItem>> {
-        const where = vendorId ? {vendor: {id: vendorId}} : {};
+    async listMenuItems(pagedRequest: PagedRequestDto, filterDto: MenuItemListFilterDto): Promise<EntityListAndCount<MenuItem>> {
+        const where = {
+            ...(filterDto.vendorId && {vendor: {id: filterDto.vendorId}}), //Object spreading with a conditional property
+        };
 
         const [menuItems, count] = await this.menuItemsRepository.findAndCount({
             where,
@@ -45,24 +47,27 @@ export default class MenuItemsService {
         });
 
         return {
-            entities: buildMenuItemListDto(menuItems),
+            entities: menuItems,
             count
         }
     }
 
-    async getMenuItemDetails(vendorId: number, itemId: number) {
-        return this.menuItemsRepository.findOneBy({vendor: {id: vendorId}, id: itemId}).then(menuItem => {
+    async getMenuItemDetails(itemId: number): Promise<MenuItem> {
+        return this.menuItemsRepository.findOne({
+            where: {id: itemId},
+            relations: ['vendor']
+        }).then(menuItem => {
             if (!menuItem) throw new HttpError('Menu Item Not Found', 404);
             return menuItem;
         });
     }
 
-    async updateMenuItem(vendorId: number, itemId: number, updateMenuItemDto: UpdateMenuItemDto) {
+    async updateMenuItem(itemId: number, userId: number, updateMenuItemDto: UpdateMenuItemDto): Promise<MenuItem> {
         if (updateMenuItemDto.name) {
             await this.menuItemsRepository.findOne({
                 where: {
                     name: updateMenuItemDto.name,
-                    vendor: {id: vendorId}
+                    vendor: {user: {id: userId}},
                 }
             }).then(menuItem => {
                 if (menuItem && menuItem.id != itemId) {
@@ -71,18 +76,20 @@ export default class MenuItemsService {
             });
         }
 
-        await this.menuItemsRepository.update({id: itemId, vendor: {id: vendorId}}, updateMenuItemDto).then(result => {
+        await this.menuItemsRepository.update({id: itemId}, updateMenuItemDto).then(result => {
             if (result.affected! < 1) throw new HttpError('No Menu Item Found to Update', 404);
         });
 
         Logger.log(`Menu Item ${itemId} successfully updated`);
 
-        const menuItem = await this.menuItemsRepository.findOne({where: {id: itemId}, relations: {vendor: true}});
-        return buildMenuItemDto(menuItem!);
+        return this.menuItemsRepository.findOne({where: {id: itemId}, relations: {vendor: true}}).then(menuItem => {
+            if (!menuItem) throw new HttpError('Menu Item Not Found', 404);
+            return menuItem;
+        });
     }
 
-    async removeMenuItem(vendorId: number, itemId: number) {
-        await this.menuItemsRepository.delete({id: itemId, vendor: {id: vendorId}}).then(result => {
+    async removeMenuItem(itemId: number): Promise<void> {
+        await this.menuItemsRepository.delete({id: itemId}).then(result => {
             if (result.affected! < 1) throw new HttpError('No Menu Item Found to Delete', 404);
         });
 

@@ -7,7 +7,7 @@ export default class VendorDto implements Dto<Vendor> {
     businessNumber?: string;
 }
 
-export function buildVendorDto(vendor: Vendor): VendorDto {
+export function mapToVendorDto(vendor: Vendor): VendorDto {
     return {
         id: vendor.id,
         businessName: vendor.businessName,
@@ -16,6 +16,6 @@ export function buildVendorDto(vendor: Vendor): VendorDto {
     };
 }
 
-export function buildVendorListDto(vendors: Vendor[]): VendorDto[] {
-    return vendors.map(buildVendorDto);
+export function mapToVendorDtoList(vendors: Vendor[]): VendorDto[] {
+    return vendors.map(mapToVendorDto);
 }

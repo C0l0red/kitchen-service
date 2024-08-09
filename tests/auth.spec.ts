@@ -3,14 +3,16 @@ import ExpressApp from "../src/app";
 
 import {Express} from "express";
 import {dataSource} from "./data";
-import {mockLoginDtoForCustomer, mockLoginDtoForVendor, mockRegisterCustomerDto, mockRegisterVendorDto} from "./mocks";
+import {mockLoginDtoForCustomer, mockLoginDtoForVendor, mockCreateCustomerDto, mockCreateVendorDto} from "./mocks";
+import {DatabaseManager} from "../src/data-source";
 
 describe("Auth Resource", () => {
     let expressApp: ExpressApp;
     let app: Express
 
     beforeEach(async () => {
-        expressApp = new ExpressApp(dataSource);
+        const databaseManager = new DatabaseManager(dataSource);
+        expressApp = new ExpressApp(databaseManager);
         await expressApp.initializeApp();
         app = expressApp.getApp();
     });
@@ -19,68 +21,13 @@ describe("Auth Resource", () => {
         expressApp.destroyDatabase();
     });
 
-    describe("POST /auth/register-vendor", () => {
-        it("should respond with 200", async () => {
-            const response = await request(app)
-                .post('/auth/register-vendor')
-                .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
-
-            expect(response.status).toEqual(201);
-            expect(response.body).toHaveProperty("message");
-        });
-
-        it("should not allow duplicate usernames", async () => {
-            const response = await request(app)
-                .post('/auth/register-vendor')
-                .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
-
-            expect(response.status).toEqual(201);
-
-            const secondResponse = await request(app)
-                .post('/auth/register-vendor')
-                .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
-
-            expect(secondResponse.status).toEqual(409);
-        });
-    });
-
-    describe("POST /auth/register-customer", () => {
-        it("should respond with 200", async () => {
-            const response = await request(app)
-                .post('/auth/register-customer')
-                .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
-
-            expect(response.status).toEqual(201);
-            expect(response.body).toHaveProperty("message");
-        });
-
-        it("should not allow duplicate emails", async () => {
-            const response = await request(app)
-                .post('/auth/register-customer')
-                .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
-
-            expect(response.status).toEqual(201);
-
-            const secondResponse = await request(app)
-                .post('/auth/register-customer')
-                .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
-
-            expect(secondResponse.status).toEqual(409);
-        });
-    });
 
     describe("POST /auth/login", () => {
         it("should return an auth token on correct credentials", async () => {
             const registrationResponse = await request(app)
-                .post('/auth/register-customer')
+                .post('/customers')
                 .set('Accept', 'application/json')
-                .send(mockRegisterCustomerDto);
+                .send(mockCreateCustomerDto);
 
             expect(registrationResponse.status).toEqual(201);
 
@@ -97,9 +44,9 @@ describe("Auth Resource", () => {
 
         it("should return a 401 on incorrect credentials", async () => {
             const registrationResponse = await request(app)
-                .post('/auth/register-vendor')
+                .post('/vendors')
                 .set('Accept', 'application/json')
-                .send(mockRegisterVendorDto);
+                .send(mockCreateVendorDto);
 
             expect(registrationResponse.status).toEqual(201);
 

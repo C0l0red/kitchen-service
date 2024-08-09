@@ -1,23 +1,10 @@
-import Vendor from "../src/vendors/models/vendor.entity";
-import User from "../src/users/model/user.entity";
-import UsersService from "../src/users/users.service";
-import {UserType} from "../src/users/model/user-type.enum";
-import Customer from "../src/customers/models/customer.entity";
-import VendorsService from "../src/vendors/vendors.service";
-import CustomersService from "../src/customers/customers.service";
-import MenuItem from "../src/menu-items/models/menu-item.entity";
 import CreateMenuItemDto from "../src/menu-items/dto/create-menu-item.dto";
-import {RegisterCustomerDto, RegisterVendorDto} from "../src/auth/dto/register.dto";
 import LoginDto from "../src/auth/dto/login.dto";
-import {DataSource, EntityManager} from "typeorm";
+import {CreateCustomerDto} from "../src/customers/dto/create-customer.dto";
+import {CreateVendorDto} from "../src/vendors/dto/create-vendor.dto";
 
 
-type MockUsersRepository = jest.Mocked<UsersRepository>;
-type MockCustomersRepository = jest.Mocked<CustomersRepository>;
-type MockVendorsRepository = jest.Mocked<VendorsRepository>;
-type MockMenuItemsRepository = jest.Mocked<MenuItemsRepository>;
-
-export const mockRegisterVendorDto: RegisterVendorDto = {
+export const mockCreateVendorDto: CreateVendorDto = {
     email: "vendor@test.com",
     password: "password",
     businessName: "Test Business",
@@ -25,7 +12,7 @@ export const mockRegisterVendorDto: RegisterVendorDto = {
     phoneNumber: "08123456789",
 };
 
-export const mockRegisterAltVendorDto: RegisterVendorDto = {
+export const mockCreateAltVendorDto: CreateVendorDto = {
     email: "alt.vendor@test.com",
     password: "password",
     businessName: "Alt Test Business",
@@ -33,7 +20,7 @@ export const mockRegisterAltVendorDto: RegisterVendorDto = {
     phoneNumber: "08123456789",
 };
 
-export const mockRegisterCustomerDto: RegisterCustomerDto = {
+export const mockCreateCustomerDto: CreateCustomerDto = {
     email: 'customer@test.com',
     password: 'password',
     firstName: 'Test',
@@ -73,94 +60,3 @@ export const mockCreateMenuItemGizdodoDto: CreateMenuItemDto = {
     description: 'Peppered Gizzard and Plantains',
     price: 12400.50,
 }
-
-export const mockUser: User = {
-    id: 1,
-    email: 'email@test.com',
-    password: 'password',
-    phoneNumber: '',
-    userType: UserType.CUSTOMER,
-    customer: {
-        id: 1,
-        firstName: 'Test',
-        lastName: 'User',
-        user: new User()
-    }
-}
-
-export const mockVendor: Vendor = {
-    id: 1,
-    businessName: 'Test Business',
-    businessDescription: 'Does test businesses',
-    createdAt: new Date(),
-    user: mockUser
-};
-
-export const mockCustomer: Customer = {
-    id: 1,
-    firstName: 'Test',
-    lastName: 'User',
-    user: mockUser
-}
-
-export const mockMenuItem: MenuItem = {
-    id: 1,
-    name: 'Southern Fried Chicken',
-    description: 'Crunchy golden brown fried chicken',
-    price: 500.00,
-    vendor: mockVendor,
-}
-
-const mockEntityManager: jest.Mocked<EntityManager> = {
-    findOneBy: jest.fn(),
-    save: jest.fn()
-} as unknown as jest.Mocked<EntityManager>;
-
-export const mockDataSource: jest.Mocked<DataSource> = {
-    manager: {
-        transaction: jest.fn().mockImplementation(<T>(runInTransaction: (entityManager: EntityManager) => Promise<T>) => Promise<void>)
-    }
-} as unknown as jest.Mocked<DataSource>;
-
-export const mockUsersRepository: MockUsersRepository = {
-    findOne: jest.fn().mockResolvedValue(mockUser),
-    save: jest.fn(),
-    findOneBy: jest.fn().mockResolvedValue({id: 1, username: 'Test'})
-} as unknown as MockUsersRepository;
-
-export const mockVendorsRepository: MockVendorsRepository = {
-    save: jest.fn().mockImplementation(),
-    findOneBy: jest.fn().mockResolvedValue(mockVendor),
-    findOne: jest.fn().mockResolvedValue(mockVendor),
-    findAndCount: jest.fn().mockResolvedValue([[mockVendor], 1])
-} as unknown as MockVendorsRepository;
-
-export const mockCustomersRepository: MockCustomersRepository = {
-    save: jest.fn().mockImplementation(),
-} as unknown as MockCustomersRepository;
-
-export const mockMenuItemsRepository: MockMenuItemsRepository = {
-    save: jest.fn().mockResolvedValue(mockMenuItem),
-    findAndCount: jest.fn().mockResolvedValue([[mockMenuItem], 1]),
-    findOneBy: jest.fn().mockResolvedValue(mockMenuItem),
-    findOne: jest.fn().mockResolvedValue(mockMenuItem),
-    update: jest.fn().mockResolvedValue({affected: 1}),
-    delete: jest.fn().mockResolvedValue({affected: 1}),
-} as unknown as MockMenuItemsRepository;
-
-export const mockUsersService: jest.Mocked<UsersService> = {
-    createUser: jest.fn().mockResolvedValue(mockUser),
-    findUserByEmail: jest.fn().mockResolvedValue(mockUser),
-    findUserById: jest.fn().mockResolvedValue(mockUser),
-    getProfile: jest.fn().mockResolvedValue(mockUser),
-} as unknown as jest.Mocked<UsersService>;
-
-export const mockVendorsService: jest.Mocked<VendorsService> = {
-    createVendor: jest.fn().mockResolvedValue(mockVendor),
-    listVendors: jest.fn().mockResolvedValue([mockVendor]),
-    getVendorDetails: jest.fn().mockResolvedValue(mockVendor)
-} as unknown as jest.Mocked<VendorsService>;
-
-export const mockCustomersService: jest.Mocked<CustomersService> = {
-    createCustomer: jest.fn().mockResolvedValue(mockCustomer)
-} as unknown as jest.Mocked<CustomersService>;

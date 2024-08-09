@@ -1,4 +1,4 @@
-import {IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString, validate} from "class-validator";
+import {IsNotEmpty, IsNumber, IsOptional, IsString, validate} from "class-validator";
 import RequestValidationError from "../../common/errors/request-validation.error";
 
 export default class CreateMenuItemDto {
@@ -15,7 +15,7 @@ export default class CreateMenuItemDto {
     price: number;
 }
 
-export async function buildCreateMenuItemDto(object: any): Promise<CreateMenuItemDto> {
+export async function mapToCreateMenuItemDto(object: any): Promise<CreateMenuItemDto> {
     const createMenuItemDto = new CreateMenuItemDto();
     createMenuItemDto.name = object.name;
     createMenuItemDto.description = object.description;

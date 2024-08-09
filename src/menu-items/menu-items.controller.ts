@@ -1,11 +1,13 @@
 import MenuItemsService from "./menu-items.service";
 import {Request, Response, NextFunction} from "express";
-import {buildCreateMenuItemDto} from "./dto/create-menu-item.dto";
+import {mapToCreateMenuItemDto} from "./dto/create-menu-item.dto";
 import AuthenticatedRequest from "../common/interfaces/authenticated-request";
-import {buildResponse} from "../common/dto/response.dto";
-import {buildPagedRequestDto} from "../common/dto/paged-request.dto";
-import {buildUpdateMenuItemDto} from "./dto/update-menu-item.dto";
-import {buildPagedResponseDto} from "../common/dto/paged-response.dto";
+import {mapToresponseDto} from "../common/dto/response.dto";
+import {mapToPagedRequestDto} from "../common/dto/paged-request.dto";
+import {mapToUpdateMenuItemDto} from "./dto/update-menu-item.dto";
+import {mapToPagedResponseDto} from "../common/dto/paged-response.dto";
+import {mapToMenuItemDto, mapToMenuItemDtoList} from "./dto/menu-item.dto";
+import {mapToMenuItemListFilterDto} from "./dto/menu-item-list-filter.dto";
 
 export default class MenuItemsController {
     constructor(private readonly menuItemsService: MenuItemsService) {
@@ -14,9 +16,9 @@ export default class MenuItemsController {
     async createMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
             const userId = (request as AuthenticatedRequest).userId;
-            const dto = await buildCreateMenuItemDto(request.body);
-            const data = await this.menuItemsService.createMenuItem(userId, dto);
-            const responseData = buildResponse('Menu Item added successfully', data);
+            const dto = await mapToCreateMenuItemDto(request.body);
+            const menuItem = await this.menuItemsService.createMenuItem(userId, dto);
+            const responseData = mapToresponseDto('Menu Item added successfully', menuItem, mapToMenuItemDto);
 
             response.status(201).json(responseData);
         } catch (error) {
@@ -24,24 +26,17 @@ export default class MenuItemsController {
         }
     }
 
-    async listAllMenuItems(request: Request, response: Response, next: NextFunction) {
+    async listMenuItems(request: Request, response: Response, next: NextFunction) {
         try {
-            const pagedRequest = await buildPagedRequestDto(request.query);
-            const data = await this.menuItemsService.listMenuItemsForVendor(pagedRequest);
-            const responseData = buildPagedResponseDto('Menu Items fetched successfully', data, pagedRequest);
-
-            response.status(200).json(responseData);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async listMenuItemsForVendor(request: Request, response: Response, next: NextFunction) {
-        try {
-            const vendorId = Number(request.params.vendorId);
-            const pagedRequest = await buildPagedRequestDto(request.query);
-            const data = await this.menuItemsService.listMenuItemsForVendor(pagedRequest, vendorId);
-            const responseData = buildPagedResponseDto('Menu Items fetched successfully', data, pagedRequest);
+            const filterDto = await mapToMenuItemListFilterDto(request.query);
+            const pagedRequest = await mapToPagedRequestDto(request.query);
+            const entitiesAndCount = await this.menuItemsService.listMenuItems(pagedRequest, filterDto);
+            const responseData = mapToPagedResponseDto(
+                'Menu Items fetched successfully',
+                entitiesAndCount,
+                pagedRequest,
+                mapToMenuItemDtoList
+            );
 
             response.status(200).json(responseData);
         } catch (error) {
@@ -52,9 +47,8 @@ export default class MenuItemsController {
     async getMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
             const menuItemId = Number(request.params.menuItemId);
-            const vendorId = Number(request.params.vendorId);
-            const data = await this.menuItemsService.getMenuItemDetails(vendorId, menuItemId);
-            const responseData = buildResponse('Menu Item fetched successfully', data);
+            const menuItem = await this.menuItemsService.getMenuItemDetails(menuItemId);
+            const responseData = mapToresponseDto('Menu Item fetched successfully', menuItem, mapToMenuItemDto);
 
             response.status(200).json(responseData);
         } catch (error) {
@@ -64,11 +58,12 @@ export default class MenuItemsController {
 
     async updateMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
-            const vendorId = Number(request.params.vendorId);
+            const userId = (request as AuthenticatedRequest).userId;
             const itemId = Number(request.params.menuItemId);
-            const dto = await buildUpdateMenuItemDto(request.body);
-            const data = await this.menuItemsService.updateMenuItem(vendorId, itemId, dto);
-            const responseData = buildResponse('Menu Item updated successfully', data);
+            const dto = await mapToUpdateMenuItemDto(request.body);
+
+            const menuItem = await this.menuItemsService.updateMenuItem(itemId, userId, dto);
+            const responseData = mapToresponseDto('Menu Item updated successfully', menuItem, mapToMenuItemDto);
 
             response.status(200).json(responseData);
         } catch (error) {
@@ -78,10 +73,9 @@ export default class MenuItemsController {
 
     async removeMenuItem(request: Request, response: Response, next: NextFunction) {
         try {
-            const vendorId = Number(request.params.vendorId);
             const itemId = Number(request.params.menuItemId);
-            const data = await this.menuItemsService.removeMenuItem(vendorId, itemId);
-            const responseData = buildResponse('Menu Item deleted successfully', data);
+            await this.menuItemsService.removeMenuItem(itemId);
+            const responseData = mapToresponseDto('Menu Item deleted successfully');
 
             response.status(200).json(responseData)
         } catch (error) {

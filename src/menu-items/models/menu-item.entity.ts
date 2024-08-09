@@ -12,9 +12,9 @@ export default class MenuItem {
     @Column()
     description: string;
 
-    @Column({type: 'decimal'})
+    @Column()
     price: number;
-    
+
     @ManyToOne(() => Vendor)
     vendor: Vendor;
 }

@@ -5,4 +5,5 @@ export default interface AuthenticatedRequest extends Request {
     email: string;
     userId: number;
     userType: UserType;
+    vendorId?: number;
 }

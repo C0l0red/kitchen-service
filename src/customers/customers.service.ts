@@ -1,33 +1,29 @@
-import {RegisterCustomerDto} from "../auth/dto/register.dto";
-import {UserType} from "../users/model/user-type.enum";
 import Logger from "../common/logger";
 import {DataSource} from "typeorm";
-import User from "../users/model/user.entity";
 import Customer from "./models/customer.entity";
+import {CreateCustomerDto} from "./dto/create-customer.dto";
+import UsersService from "../users/users.service";
+import {UserType} from "../users/model/user-type.enum";
 
 export default class CustomersService {
-    constructor(private readonly dataSource: DataSource) {
+    constructor(private readonly dataSource: DataSource, private readonly usersService: UsersService) {
     }
 
-    async createCustomer(registerCustomerDto: RegisterCustomerDto) {
+    async createCustomer(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+        let customer: Customer;
         // This operation is transactional
         await this.dataSource.manager.transaction(async (transactionalEntityManager) => {
-            let user = transactionalEntityManager.create(User, {
-                email: registerCustomerDto.email,
-                password: registerCustomerDto.password,
-                phoneNumber: registerCustomerDto.phoneNumber,
-                userType: UserType.CUSTOMER
-            });
-            user = await transactionalEntityManager.save(user);
-            Logger.log(`New user '${user.email}' created successfully`);
+            const user = await this.usersService.createUser(createCustomerDto, UserType.CUSTOMER, transactionalEntityManager);
 
-            await transactionalEntityManager.save(Customer, {
-                firstName: registerCustomerDto.firstName,
-                lastName: registerCustomerDto.lastName,
+            customer = await transactionalEntityManager.save(Customer, {
+                firstName: createCustomerDto.firstName,
+                lastName: createCustomerDto.lastName,
                 user
             });
 
-            Logger.log(`Customer ${registerCustomerDto.firstName} created successfully`);
+            Logger.log(`Customer ${createCustomerDto.firstName} created successfully`);
         });
+
+        return customer!;
     }
 }

@@ -11,7 +11,7 @@ export default class PagedRequestDto {
     pageSize: number;
 }
 
-export async function buildPagedRequestDto(object: any): Promise<PagedRequestDto> {
+export async function mapToPagedRequestDto(object: any): Promise<PagedRequestDto> {
     const dto = new PagedRequestDto();
     dto.page = parseInt(object.page ?? "1");
     dto.pageSize = parseInt(object.pageSize ?? "10");

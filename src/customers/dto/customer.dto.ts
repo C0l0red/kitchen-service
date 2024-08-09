@@ -6,7 +6,7 @@ export default class CustomerDto implements Dto<Customer> {
     lastName: string;
 }
 
-export function buildCustomerDto(customer: Customer): CustomerDto {
+export function mapToCustomerDto(customer: Customer): CustomerDto {
     return {
         id: customer.id,
         firstName: customer.firstName,

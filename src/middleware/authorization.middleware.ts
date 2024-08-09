@@ -2,19 +2,14 @@ import {Request, Response, NextFunction} from "express";
 import HttpError from "../common/errors/http.error";
 import EncryptionService from "../common/encryption.service";
 import AuthenticatedRequest from "../common/interfaces/authenticated-request";
+import Auth from "../auth";
 
-const privateResources = ['/menu-items', '/vendors', '/users'];
 
 export const authorizationMiddleware = (
     request: Request,
     response: Response,
     next: NextFunction
 ) => {
-    if (!privateResources.some(resource => request.url.startsWith(resource))) {
-        next();
-        return;
-    }
-
     const authHeader = request.headers.authorization;
     if (authHeader) {
         const token = authHeader.split(" ")[1];
@@ -25,6 +20,7 @@ export const authorizationMiddleware = (
             (request as AuthenticatedRequest).email = jwtPayload.sub!;
             (request as AuthenticatedRequest).userId = jwtPayload.id;
             (request as AuthenticatedRequest).userType = jwtPayload.userType;
+            (request as AuthenticatedRequest).vendorId = jwtPayload.vendorId;
 
             next();
             return;

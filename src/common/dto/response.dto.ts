@@ -1,11 +1,11 @@
 export default class ResponseDto<T> {
     message: string;
-    data?: T;
+    data?: Dto<T>;
 }
 
-export function buildResponse<T>(message: string, data?: T): ResponseDto<T> {
+export function mapToresponseDto<T>(message: string, data?: T, dtoMapper?: (entity:T) => Dto<T>): ResponseDto<Dto<T>> {
     return {
         message,
-        data
+        data: data && dtoMapper ? dtoMapper(data) : undefined,
     }
 }
